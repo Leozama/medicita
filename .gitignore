@@ -1,5 +1,6 @@
 # Backend (Spring Boot)
 backend/target/
+backend/data/
 backend/*.jar
 backend/*.war
 backend/*.ear
@@ -30,4 +31,3 @@ Thumbs.db
 
 # Archivos de entorno
 .env
-*.properties

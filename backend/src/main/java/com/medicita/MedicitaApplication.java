@@ -9,5 +9,4 @@ public class MedicitaApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MedicitaApplication.class, args);
 	}
-
 }
