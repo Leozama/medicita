@@ -6,6 +6,23 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * CONTROLADOR REST - CAPA DE PRESENTACIÓN
+ *
+ * RESPONSABILIDAD:
+ * - Manejar las peticiones HTTP (GET, POST, PUT, DELETE)
+ * - Convertir JSON ↔ Objetos Java
+ * - Devolver respuestas HTTP apropiadas
+ * - Validar datos de entrada
+ *
+ * REGLAS:
+ * - Solo debe contener lógica relacionada con HTTP
+ * - NO debe contener lógica de negocio
+ * - Delega toda la lógica al Service
+ *
+ * URL BASE: http://localhost:8080/api/pacientes
+ */
+
 @RestController
 //http://localhost:8080/api/pacientes
 @RequestMapping

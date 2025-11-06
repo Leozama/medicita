@@ -6,6 +6,22 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * IMPLEMENTACIÓN DE SERVICIO - LÓGICA DE NEGOCIO
+ *
+ * RESPONSABILIDAD:
+ * - Implementar las reglas de negocio
+ * - Coordinar operaciones entre diferentes componentes
+ * - Manejar transacciones y validaciones complejas
+ * - Transformar datos entre capas
+ *
+ * REGLAS:
+ * - Contiene la lógica central de la aplicación
+ * - Puede usar múltiples repositories
+ * - Maneja excepciones de negocio
+ * - NO debe contener lógica HTTP o de base de datos directa
+ */
+
 @Service
 public class PacienteServiceImplementation implements PacienteService {
 

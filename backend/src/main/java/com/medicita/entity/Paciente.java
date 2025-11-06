@@ -3,6 +3,22 @@ package com.medicita.entity;
 import jakarta.persistence.*;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 
+/**
+ * ENTIDAD - MODELO DE DATOS
+ *
+ * RESPONSABILIDAD:
+ * - Representar la tabla de la base de datos
+ * - Definir la estructura de los datos
+ * - Contener validaciones de datos
+ * - Mapear objetos Java ↔ tablas SQL
+ *
+ * REGLAS:
+ * - Solo datos, NO lógica de negocio compleja
+ * - Anotaciones JPA para mapeo
+ * - Anotaciones de validación
+ * - Getters/Setters obligatorios para JPA
+ */
+
 @Entity
 @Table(name = "Paciente")
 public class Paciente {
