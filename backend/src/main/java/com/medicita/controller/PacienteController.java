@@ -25,7 +25,7 @@ import java.util.List;
 
 @RestController
 //http://localhost:8080/api/pacientes
-@RequestMapping
+@RequestMapping("/api/pacientes")
 public class PacienteController {
 
     private final PacienteService pacienteService;
