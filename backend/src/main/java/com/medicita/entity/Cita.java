@@ -12,32 +12,37 @@ public class Cita {
     private int id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "medico_id", nullable = false)
-    public Medico medico;
-    private String nombreMedico;
+    private Medico medico;
     private String horaAgendada;
     private String motivo;
     private String fecha;
 
 
-
     public Cita() {
     }
 
-    public Cita(int id, String nombreMedico, String horaAgendada, String motivo, String fecha) {
+    public Cita(int id, Medico medico, String horaAgendada, String motivo, String fecha) {
         this.id = id;
-        this.nombreMedico =  nombreMedico;
+        this.medico = medico;
         this.horaAgendada = horaAgendada;
         this.motivo = motivo;
         this.fecha = fecha;
     }
 
-
+    public String getNombreMedicoCompleto() {
+        if (medico != null) {
+            return medico.getFirstName() + " " + medico.getSecondName();
+        }
+        return null;
+    }
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
+
     public Medico getMedico() {
         return medico;
     }
@@ -61,18 +66,12 @@ public class Cita {
     public void setMotivo(String motivo) {
         this.motivo = motivo;
     }
+
     public String getFecha() {
         return fecha;
     }
+
     public void setFecha(String fecha) {
         this.fecha = fecha;
     }
-
-    public String getNombreMedico() {
-        if (nombreMedico == null && medico != null) {
-            nombreMedico = medico.getFirstName() + " " + medico.getSecondName();
-        }
-        return nombreMedico;
-    }
-    public void setNombreMedico(String nombreMedico) {}
 }

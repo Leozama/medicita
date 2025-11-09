@@ -5,8 +5,7 @@ import jakarta.persistence.*;
 
 public class CitaRequestDTO {
 
-    public Medico medico;
-    private String nombreMedico;
+    public Integer medicoId;
     private String horaAgendada;
     private String motivo;
     private String fecha;
@@ -14,19 +13,19 @@ public class CitaRequestDTO {
     public CitaRequestDTO() {
     }
 
-    public CitaRequestDTO(String nombreMedico, String horaAgendada, String motivo, String fecha) {
-        this.nombreMedico = nombreMedico;
+    public CitaRequestDTO(Integer medicoId, String horaAgendada, String motivo, String fecha) {
+        this.medicoId = medicoId;
         this.horaAgendada = horaAgendada;
         this.motivo = motivo;
         this.fecha = fecha;
     }
 
-    public Medico getMedico() {
-        return medico;
+    public Integer getMedicoId() {
+        return medicoId;
     }
 
-    public void setMedico(Medico medico) {
-        this.medico = medico;
+    public void setMedicoId(Integer medicoId) {
+        this.medicoId = medicoId;
     }
 
     public String getHoraAgendada() {
@@ -52,11 +51,4 @@ public class CitaRequestDTO {
     public void setFecha(String fecha) {
         this.fecha = fecha;
     }
-
-    public String getNombreMedico() {
-        return nombreMedico;
-
-    }
-
-    public void setNombreMedico(String nombreMedico) {}
 }

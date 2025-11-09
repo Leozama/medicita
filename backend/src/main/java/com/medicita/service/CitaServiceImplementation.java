@@ -20,15 +20,24 @@ public class CitaServiceImplementation implements CitaService {
         this.medicoRepository = medicoRepository;
     }
 
-    //Metodo nuevo para crear cita desde DTO
+    @Override
+    public Cita save(Cita cita) {
+        // Validar que el médico existe
+        if (cita.getMedico() == null || cita.getMedico().getId() == 0) {
+            throw new RuntimeException("Médico es requerido");
+        }
+        return citaRepository.save(cita);
+    }
+
+    // Método para crear cita desde DTO
     public Cita createCitaFromDTO(CitaRequestDTO citaRequestDTO) {
-        // Buscar el médico por ID
-        Medico medico = medicoRepository.findById(citaRequestDTO.getMedico().getId()).get();
+        // Buscar el médico
+        Medico medico = medicoRepository.findById(citaRequestDTO.getMedicoId())
+                .orElseThrow(() -> new RuntimeException("Médico no encontrado con ID: " + citaRequestDTO.getMedicoId()));
 
-
-        // Crear la entidad Cita
+        // Crear la cita
         Cita cita = new Cita();
-        cita.setNombreMedico(citaRequestDTO.getNombreMedico());
+        cita.setMedico(medico);
         cita.setHoraAgendada(citaRequestDTO.getHoraAgendada());
         cita.setMotivo(citaRequestDTO.getMotivo());
         cita.setFecha(citaRequestDTO.getFecha());
@@ -36,27 +45,20 @@ public class CitaServiceImplementation implements CitaService {
         return citaRepository.save(cita);
     }
 
-    // Metodo para actualizar con DTO
+    // Método para actualizar con DTO
     public Cita updateCitaFromDTO(Integer id, CitaRequestDTO citaRequestDTO) {
-        // Verificar que la cita existe
         Cita citaExistente = citaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cita no encontrada con ID: " + id));
 
-        // Buscar el médico por ID
-        Medico medico = medicoRepository.findById(citaRequestDTO.getMedico().getId()).get();
+        Medico medico = medicoRepository.findById(citaRequestDTO.getMedicoId())
+                .orElseThrow(() -> new RuntimeException("Médico no encontrado con ID: " + citaRequestDTO.getMedicoId()));
 
-        // Actualizar la cita
-        citaExistente.setNombreMedico(citaRequestDTO.getNombreMedico());
+        citaExistente.setMedico(medico);
         citaExistente.setHoraAgendada(citaRequestDTO.getHoraAgendada());
         citaExistente.setMotivo(citaRequestDTO.getMotivo());
         citaExistente.setFecha(citaRequestDTO.getFecha());
 
         return citaRepository.save(citaExistente);
-    }
-
-    @Override
-    public Cita save(Cita cita) {
-        return citaRepository.save(cita);
     }
 
     @Override

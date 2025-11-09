@@ -1,19 +1,20 @@
 package com.medicita.controller;
 
+import com.medicita.DTO.CitaRequestDTO;
 import com.medicita.entity.Cita;
 import com.medicita.service.CitaService;
+import com.medicita.service.CitaServiceImplementation;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-//http://localhost:8080/api/citas
 @RequestMapping("/api/citas")
 public class CitaController {
 
     private final CitaService citaService;
 
-    public CitaController( CitaService citaService) {
+    public CitaController(CitaService citaService) {
         this.citaService = citaService;
     }
 
