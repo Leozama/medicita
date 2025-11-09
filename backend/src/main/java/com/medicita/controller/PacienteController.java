@@ -25,7 +25,7 @@ import java.util.List;
 
 @RestController
 //http://localhost:8080/api/pacientes
-@RequestMapping
+@RequestMapping("/api/pacientes")
 public class PacienteController {
 
     private final PacienteService pacienteService;
@@ -66,6 +66,8 @@ public class PacienteController {
         pacienteDb.setSecondName(paciente.getSecondName());
         pacienteDb.setAge(paciente.getAge());
         pacienteDb.setCI(paciente.getCI());
+        pacienteDb.setUserName(paciente.getUserName());
+        pacienteDb.setPassword(paciente.getPassword());
         return pacienteService.update(pacienteDb);
     }
 }

@@ -27,16 +27,20 @@ public class Paciente {
     private int id;
     private String firstName;
     private String secondName;
+    private String userName;
+    private String password;
     private int age;
     private int CI;
 
     public Paciente() {
     }
 
-    public Paciente(int id, String firstName, String secondName, int age, int CI) {
+    public Paciente(int id, String firstName, String secondName, int age, int CI, String userName, String password) {
         this.id = id;
         this.firstName = firstName;
         this.secondName = secondName;
+        this.userName =  userName;
+        this.password = password;
         this.age = age;
         this.CI = CI;
     }
@@ -81,5 +85,19 @@ public class Paciente {
         this.CI = CI;
     }
 
+    public String getUserName() {
+        return userName;
+    }
 
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
