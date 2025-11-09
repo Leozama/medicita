@@ -1,6 +1,7 @@
 package com.medicita.controller;
 
 import com.medicita.DTO.CitaRequestDTO;
+import com.medicita.DTO.CitaResponseDTO;
 import com.medicita.entity.Cita;
 import com.medicita.service.CitaService;
 import com.medicita.service.CitaServiceImplementation;
@@ -13,9 +14,11 @@ import java.util.List;
 public class CitaController {
 
     private final CitaService citaService;
+    private final CitaServiceImplementation citaServiceImplementation;
 
-    public CitaController(CitaService citaService) {
+    public CitaController(CitaService citaService, CitaServiceImplementation citaServiceImplementation) {
         this.citaService = citaService;
+        this.citaServiceImplementation = citaServiceImplementation;
     }
 
     // http://localhost:8080/api/citas
@@ -51,5 +54,29 @@ public class CitaController {
         citaDb.setMotivo(cita.getMotivo());
         citaDb.setFecha(cita.getFecha());
         return citaService.update(citaDb);
+    }
+
+    // NUEVO: Crear cita usando DTO
+    @PostMapping("/dto")
+    public Cita createCitaWithDTO(@RequestBody CitaRequestDTO citaRequestDTO) {
+        return citaServiceImplementation.createCitaFromDTO(citaRequestDTO);
+    }
+
+    // NUEVO: Obtener todas las citas como DTO
+    @GetMapping("/dto")
+    public List<CitaResponseDTO> findAllAsDTO() {
+        return citaServiceImplementation.findAllAsDTO();
+    }
+
+    // NUEVO: Obtener cita por ID como DTO
+    @GetMapping("/dto/{id}")
+    public CitaResponseDTO findByIdAsDTO(@PathVariable Integer id) {
+        return citaServiceImplementation.findByIdAsDTO(id);
+    }
+
+    // NUEVO: Actualizar cita usando DTO
+    @PutMapping("/dto/{id}")
+    public Cita updateCitaWithDTO(@PathVariable Integer id, @RequestBody CitaRequestDTO citaRequestDTO) {
+        return citaServiceImplementation.updateCitaFromDTO(id, citaRequestDTO);
     }
 }

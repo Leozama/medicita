@@ -1,15 +1,19 @@
 package com.medicita.service;
 
 import com.medicita.DTO.CitaRequestDTO;
+import com.medicita.DTO.CitaResponseDTO;
 import com.medicita.entity.Cita;
 import com.medicita.entity.Medico;
 import com.medicita.repository.CitaRepository;
 import com.medicita.repository.MedicoRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class CitaServiceImplementation implements CitaService {
 
     private final CitaRepository citaRepository;
@@ -26,6 +30,12 @@ public class CitaServiceImplementation implements CitaService {
         if (cita.getMedico() == null || cita.getMedico().getId() == 0) {
             throw new RuntimeException("Médico es requerido");
         }
+
+        // Cargar el médico completo desde la base de datos
+        Medico medico = medicoRepository.findById(cita.getMedico().getId())
+                .orElseThrow(() -> new RuntimeException("Médico no encontrado con ID: " + cita.getMedico().getId()));
+
+        cita.setMedico(medico);
         return citaRepository.save(cita);
     }
 
@@ -62,23 +72,84 @@ public class CitaServiceImplementation implements CitaService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Cita> findAll() {
-        return  citaRepository.findAll();
+        return citaRepository.findAllWithMedico();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Cita findById(Integer id) {
-        return  citaRepository.findById(id).get();
+        return citaRepository.findByIdWithMedico(id)
+                .orElseThrow(() -> new RuntimeException("Cita no encontrada con ID: " + id));
     }
 
     @Override
     public void deleteById(Integer id) {
         citaRepository.deleteById(id);
-
     }
 
     @Override
     public Cita update(Cita cita) {
-        return  citaRepository.save(cita);
+        // Verificar que la cita existe
+        Cita citaExistente = citaRepository.findByIdWithMedico(cita.getId())
+                .orElseThrow(() -> new RuntimeException("Cita no encontrada con ID: " + cita.getId()));
+
+        // Si se está actualizando el médico, cargarlo completo
+        if (cita.getMedico() != null) {
+            Medico medico = medicoRepository.findById(cita.getMedico().getId())
+                    .orElseThrow(() -> new RuntimeException("Médico no encontrado con ID: " + cita.getMedico().getId()));
+            citaExistente.setMedico(medico);
+        }
+
+        citaExistente.setHoraAgendada(cita.getHoraAgendada());
+        citaExistente.setMotivo(cita.getMotivo());
+        citaExistente.setFecha(cita.getFecha());
+
+        return citaRepository.save(citaExistente);
+    }
+
+    // NUEVO: Método para obtener todas las citas como DTO
+    public List<CitaResponseDTO> findAllAsDTO() {
+        List<Cita> citas = citaRepository.findAllWithMedico();
+        return citas.stream().map(cita -> {
+            CitaResponseDTO dto = new CitaResponseDTO();
+            dto.setId(cita.getId());
+            dto.setHoraAgendada(cita.getHoraAgendada());
+            dto.setMotivo(cita.getMotivo());
+            dto.setFecha(cita.getFecha());
+
+            if (cita.getMedico() != null) {
+                dto.setNombreMedico(cita.getMedico().getFirstName() + " " + cita.getMedico().getSecondName());
+                dto.setEspecialidad(cita.getMedico().getEspecialidad());
+            } else {
+                dto.setNombreMedico("Médico no asignado");
+                dto.setEspecialidad("No especificada");
+            }
+
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    // NUEVO: Método para obtener una cita por ID como DTO
+    public CitaResponseDTO findByIdAsDTO(Integer id) {
+        Cita cita = citaRepository.findByIdWithMedico(id)
+                .orElseThrow(() -> new RuntimeException("Cita no encontrada con ID: " + id));
+
+        CitaResponseDTO dto = new CitaResponseDTO();
+        dto.setId(cita.getId());
+        dto.setHoraAgendada(cita.getHoraAgendada());
+        dto.setMotivo(cita.getMotivo());
+        dto.setFecha(cita.getFecha());
+
+        if (cita.getMedico() != null) {
+            dto.setNombreMedico(cita.getMedico().getFirstName() + " " + cita.getMedico().getSecondName());
+            dto.setEspecialidad(cita.getMedico().getEspecialidad());
+        } else {
+            dto.setNombreMedico("Médico no asignado");
+            dto.setEspecialidad("No especificada");
+        }
+
+        return dto;
     }
 }
