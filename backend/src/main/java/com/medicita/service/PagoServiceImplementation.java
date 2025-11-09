@@ -18,26 +18,27 @@ public class PagoServiceImplementation implements PagoService {
 
     @Override
     public Pago save(Pago pago) {
-        return null;
+        return  pagoRepository.save(pago);
     }
 
     @Override
     public List<Pago> findAll() {
-        return List.of();
+        return  pagoRepository.findAll();
     }
 
     @Override
     public Pago findById(Integer id) {
-        return null;
+        return  pagoRepository.findById(id).get();
     }
 
     @Override
     public void deleteById(Integer id) {
+        pagoRepository.deleteById(id);
 
     }
 
     @Override
     public Pago update(Pago pago) {
-        return null;
+        return   pagoRepository.save(pago);
     }
 }

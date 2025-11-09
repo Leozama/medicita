@@ -40,7 +40,7 @@ public class PagoController {
        pagoDB.setFecha(pago.getFecha());
        pagoDB.setMonto(pago.getMonto());
        pagoDB.setEstado(pago.getEstado());
-       pagoDB.setEstado(pago.getEstado());
+       pagoDB.setMetodoPago(pago.getMetodoPago());
         return pagoService.update(pagoDB);
     }
 }
