@@ -1,43 +1,26 @@
-package com.medicita.entity;
+package com.medicita.DTO;
 
+import com.medicita.entity.Medico;
 import jakarta.persistence.*;
-import org.springframework.boot.autoconfigure.web.WebProperties;
 
+public class CitaRequestDTO {
 
-@Entity
-@Table(name = "citas")
-public class Cita {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "medico_id", nullable = false)
     public Medico medico;
     private String nombreMedico;
     private String horaAgendada;
     private String motivo;
     private String fecha;
 
-
-
-    public Cita() {
+    public CitaRequestDTO() {
     }
 
-    public Cita(int id, String nombreMedico, String horaAgendada, String motivo, String fecha) {
-        this.id = id;
-        this.nombreMedico =  nombreMedico;
+    public CitaRequestDTO(String nombreMedico, String horaAgendada, String motivo, String fecha) {
+        this.nombreMedico = nombreMedico;
         this.horaAgendada = horaAgendada;
         this.motivo = motivo;
         this.fecha = fecha;
     }
 
-
-    public int getId() {
-        return id;
-    }
-    public void setId(int id) {
-        this.id = id;
-    }
     public Medico getMedico() {
         return medico;
     }
@@ -61,18 +44,19 @@ public class Cita {
     public void setMotivo(String motivo) {
         this.motivo = motivo;
     }
+
     public String getFecha() {
         return fecha;
     }
+
     public void setFecha(String fecha) {
         this.fecha = fecha;
     }
 
     public String getNombreMedico() {
-        if (nombreMedico == null && medico != null) {
-            nombreMedico = medico.getFirstName() + " " + medico.getSecondName();
-        }
         return nombreMedico;
+
     }
+
     public void setNombreMedico(String nombreMedico) {}
 }

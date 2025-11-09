@@ -2,6 +2,9 @@ package com.medicita.entity;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "Medico")
 public class Medico {
@@ -12,6 +15,8 @@ public class Medico {
     private String secondName;
     private String especialidad;
     private String horario;
+    @OneToMany(mappedBy = "medico", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Cita> citas = new ArrayList<>();
 
     public Medico() {
     }
