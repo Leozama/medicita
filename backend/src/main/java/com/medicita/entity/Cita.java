@@ -13,18 +13,21 @@ public class Cita {
     private String medico;
     private String horaAgendada;
     private String motivo;
+    private String fecha;
 
 
 
     public Cita() {
     }
 
-    public Cita(int id, String medico, String horaAgendada, String motivo) {
+    public Cita(int id, String medico, String horaAgendada, String motivo, String fecha) {
         this.id = id;
         this.medico = medico;
         this.horaAgendada = horaAgendada;
         this.motivo = motivo;
+        this.fecha = fecha;
     }
+
 
     public int getId() {
         return id;
@@ -54,5 +57,11 @@ public class Cita {
 
     public void setMotivo(String motivo) {
         this.motivo = motivo;
+    }
+    public String getFecha() {
+        return fecha;
+    }
+    public void setFecha(String fecha) {
+        this.fecha = fecha;
     }
 }

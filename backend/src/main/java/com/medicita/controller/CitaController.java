@@ -48,6 +48,7 @@ public class CitaController {
         citaDb.setMedico(cita.getMedico());
         citaDb.setHoraAgendada(cita.getHoraAgendada());
         citaDb.setMotivo(cita.getMotivo());
+        citaDb.setFecha(cita.getFecha());
         return citaService.update(citaDb);
     }
 }
