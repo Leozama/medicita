@@ -64,4 +64,11 @@ public class CitaController {
     public List<CitaDTO> obtenerPorMedico(@PathVariable Integer medicoId) {
         return citaService.obtenerPorMedicoDTO(medicoId);
     }
+
+    @GetMapping("/mis-citas/{pacienteId}")
+    public List<CitaDTO> obtenerMisCitas(@PathVariable Integer pacienteId) {
+        // En una app real verificarías el usuario logueado,
+        // pero para demo asumimos que el pacienteId viene del frontend
+        return citaService.obtenerPorPacienteDTO(pacienteId.longValue());
+    }
 }

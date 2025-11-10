@@ -38,11 +38,12 @@ public class Paciente {
     // NUEVA RELACIÓN: UN PACIENTE PUEDE TENER MUCHOS PAGOS
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Pago> pagos = new ArrayList<>();
+    private String rol = "PACIENTE";
 
     public Paciente() {
     }
 
-    public Paciente(int id, String firstName, String secondName, String userName, String password, int age, int CI, List<Cita> citas, List<Pago> pagos) {
+    public Paciente(int id, String firstName, String secondName, String userName, String password, int age, int CI, List<Cita> citas, List<Pago> pagos, String rol) {
         this.id = id;
         this.firstName = firstName;
         this.secondName = secondName;
@@ -52,7 +53,9 @@ public class Paciente {
         this.CI = CI;
         this.citas = citas;
         this.pagos = pagos;
+        this.rol = rol;
     }
+
 
     public int getId() {
         return id;
@@ -124,5 +127,13 @@ public class Paciente {
 
     public void setPagos(List<Pago> pagos) {
         this.pagos = pagos;
+    }
+
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
     }
 }

@@ -21,13 +21,20 @@ public class MedicoController {
 
     //http://localhost:8080/api/medicos
     @PostMapping
-    public Medico save(@RequestBody Medico medico){
-        return  medicoService.save(medico);
+    public Medico save(@RequestBody Medico medico, @RequestParam String userRole) {
+        // En demo: si mandas "ADMIN" en el parámetro, permite crear
+        if (!"ADMIN".equals(userRole)) {
+            throw new RuntimeException("Solo administradores pueden crear médicos");
+        }
+        return medicoService.save(medico);
     }
 
     //http://localhost:8080/api/medicos
     @GetMapping
-    public List<Medico> findAll(){
+    public List<Medico> findAll(@RequestParam String userRole) {
+        if (!"ADMIN".equals(userRole)) {
+            throw new RuntimeException("Solo administradores pueden ver médicos");
+        }
         return medicoService.findAll();
     }
 
