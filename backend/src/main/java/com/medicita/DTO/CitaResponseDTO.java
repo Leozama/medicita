@@ -4,6 +4,8 @@ public class CitaResponseDTO {
     private int id;
     private String nombreMedico;
     private String especialidad;
+    private String nombrePaciente;
+    private String emailPaciente;
     private String horaAgendada;
     private String motivo;
     private String fecha;
@@ -11,10 +13,12 @@ public class CitaResponseDTO {
     public CitaResponseDTO() {
     }
 
-    public CitaResponseDTO(int id, String nombreMedico, String especialidad, String horaAgendada, String motivo, String fecha) {
+    public CitaResponseDTO(int id, String nombreMedico, String especialidad, String nombrePaciente, String emailPaciente, String horaAgendada, String motivo, String fecha) {
         this.id = id;
         this.nombreMedico = nombreMedico;
         this.especialidad = especialidad;
+        this.nombrePaciente = nombrePaciente;
+        this.emailPaciente = emailPaciente;
         this.horaAgendada = horaAgendada;
         this.motivo = motivo;
         this.fecha = fecha;
@@ -43,6 +47,22 @@ public class CitaResponseDTO {
 
     public void setEspecialidad(String especialidad) {
         this.especialidad = especialidad;
+    }
+
+    public String getNombrePaciente() {
+        return nombrePaciente;
+    }
+
+    public void setNombrePaciente(String nombrePaciente) {
+        this.nombrePaciente = nombrePaciente;
+    }
+
+    public String getEmailPaciente() {
+        return emailPaciente;
+    }
+
+    public void setEmailPaciente(String emailPaciente) {
+        this.emailPaciente = emailPaciente;
     }
 
     public String getHoraAgendada() {

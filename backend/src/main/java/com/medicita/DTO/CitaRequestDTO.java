@@ -1,11 +1,8 @@
 package com.medicita.DTO;
 
-import com.medicita.entity.Medico;
-import jakarta.persistence.*;
-
 public class CitaRequestDTO {
-
-    public Integer medicoId;
+    private Integer medicoId;
+    private Integer pacienteId;
     private String horaAgendada;
     private String motivo;
     private String fecha;
@@ -13,19 +10,29 @@ public class CitaRequestDTO {
     public CitaRequestDTO() {
     }
 
-    public CitaRequestDTO(Integer medicoId, String horaAgendada, String motivo, String fecha) {
+    public CitaRequestDTO(Integer medicoId, Integer pacienteId, String horaAgendada, String motivo, String fecha) {
         this.medicoId = medicoId;
+        this.pacienteId = pacienteId;
         this.horaAgendada = horaAgendada;
         this.motivo = motivo;
         this.fecha = fecha;
     }
 
+    // Getters y Setters
     public Integer getMedicoId() {
         return medicoId;
     }
 
     public void setMedicoId(Integer medicoId) {
         this.medicoId = medicoId;
+    }
+
+    public Integer getPacienteId() {
+        return pacienteId;
+    }
+
+    public void setPacienteId(Integer pacienteId) {
+        this.pacienteId = pacienteId;
     }
 
     public String getHoraAgendada() {

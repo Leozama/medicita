@@ -53,7 +53,7 @@ public class PacienteController {
     }
 
     //http://localhost:8080/api/pacientes/1
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Integer id){
         pacienteService.deleteById(id);
     }
@@ -64,10 +64,9 @@ public class PacienteController {
         Paciente pacienteDb = pacienteService.findById(paciente.getId());
         pacienteDb.setFirstName(paciente.getFirstName());
         pacienteDb.setSecondName(paciente.getSecondName());
-        pacienteDb.setAge(paciente.getAge());
-        pacienteDb.setCI(paciente.getCI());
-        pacienteDb.setUserName(paciente.getUserName());
-        pacienteDb.setPassword(paciente.getPassword());
+        pacienteDb.setEmail(paciente.getEmail());
+        pacienteDb.setTelefono(paciente.getTelefono());
+        pacienteDb.setFechaNacimiento(paciente.getFechaNacimiento());
         return pacienteService.update(pacienteDb);
     }
 }

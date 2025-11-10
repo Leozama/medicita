@@ -2,8 +2,10 @@ package com.medicita.repository;
 
 import com.medicita.entity.Paciente;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
 /**
  * REPOSITORY - CAPA DE ACCESO A DATOS
  *
@@ -26,5 +28,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PacienteRepository extends JpaRepository<Paciente, Integer> {
-
+    @Query("SELECT p FROM Paciente p LEFT JOIN FETCH p.citas WHERE p.id = :id")
+    Optional<Paciente> findByIdWithCitas(Integer id);
 }
