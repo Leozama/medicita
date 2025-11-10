@@ -3,15 +3,16 @@ package com.medicita.entity;
 import jakarta.persistence.*;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * ENTIDAD - MODELO DE DATOS
- *
  * RESPONSABILIDAD:
  * - Representar la tabla de la base de datos
  * - Definir la estructura de los datos
  * - Contener validaciones de datos
  * - Mapear objetos Java ↔ tablas SQL
- *
  * REGLAS:
  * - Solo datos, NO lógica de negocio compleja
  * - Anotaciones JPA para mapeo
@@ -31,15 +32,16 @@ public class Paciente {
     private String password;
     private int age;
     private int CI;
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Cita> citas = new ArrayList<>();
 
     public Paciente() {
     }
 
-    public Paciente(int id, String firstName, String secondName, int age, int CI, String userName, String password) {
-        this.id = id;
+    public Paciente(String firstName, String secondName, String userName, String password, int age, int CI, List<Cita> citas) {
         this.firstName = firstName;
         this.secondName = secondName;
-        this.userName =  userName;
+        this.userName = userName;
         this.password = password;
         this.age = age;
         this.CI = CI;
@@ -99,5 +101,13 @@ public class Paciente {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Cita> getCitas() {
+        return citas;
+    }
+
+    public void setCitas(List<Cita> citas) {
+        this.citas = citas;
     }
 }

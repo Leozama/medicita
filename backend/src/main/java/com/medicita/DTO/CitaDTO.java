@@ -1,39 +1,40 @@
-package com.medicita.entity;
+package com.medicita.DTO;
 
-import jakarta.persistence.*;
-import org.springframework.boot.autoconfigure.web.WebProperties;
+public class CitaDTO {
 
-
-@Entity
-@Table(name = "Citas")
-public class Cita {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "paciente_id", nullable = false)
-    private Paciente paciente;
+    private Integer id;
+    private PacienteDTO paciente;
     private String horaAgendada;
     private String motivo;
     private String fecha;
 
+    // Constructor vacío
+    public CitaDTO() {}
 
-
-    public Cita() {
-    }
-
-    public Cita(Paciente paciente, String horaAgendada, String motivo, String fecha) {
+    // Constructor con parámetros
+    public CitaDTO(Integer id, PacienteDTO paciente, String horaAgendada, String motivo, String fecha) {
+        this.id = id;
         this.paciente = paciente;
         this.horaAgendada = horaAgendada;
         this.motivo = motivo;
         this.fecha = fecha;
     }
 
-    public int getId() {
+    // Getters y Setters
+    public Integer getId() {
         return id;
     }
-    public void setId(int id) {
+
+    public void setId(Integer id) {
         this.id = id;
+    }
+
+    public PacienteDTO getPaciente() {
+        return paciente;
+    }
+
+    public void setPaciente(PacienteDTO paciente) {
+        this.paciente = paciente;
     }
 
     public String getHoraAgendada() {
@@ -51,18 +52,12 @@ public class Cita {
     public void setMotivo(String motivo) {
         this.motivo = motivo;
     }
+
     public String getFecha() {
         return fecha;
     }
+
     public void setFecha(String fecha) {
         this.fecha = fecha;
-    }
-
-    public Paciente getPaciente() {
-        return paciente;
-    }
-
-    public void setPaciente(Paciente paciente) {
-        this.paciente = paciente;
     }
 }

@@ -1,5 +1,6 @@
 package com.medicita.controller;
 
+import com.medicita.DTO.CitaDTO;
 import com.medicita.entity.Cita;
 import com.medicita.service.CitaService;
 import org.springframework.web.bind.annotation.*;
@@ -19,20 +20,20 @@ public class CitaController {
 
     // http://localhost:8080/api/citas
     @PostMapping
-    public Cita save(@RequestBody Cita cita){
-        return citaService.save(cita);
+    public CitaDTO save(@RequestBody Cita cita){
+        return citaService.saveDTO(cita);
     }
 
     // http://localhost:8080/api/citas
     @GetMapping
-    public List<Cita> findAll(){
-        return citaService.findAll();
+    public List<CitaDTO> findAll(){
+        return citaService.findAllDTO();
     }
 
     // http://localhost:8080/api/citas/1
     @GetMapping("/{id}")
-    public Cita findById(@PathVariable Integer id){
-        return citaService.findById(id);
+    public CitaDTO findById(@PathVariable Integer id){
+        return citaService.findByIdDTO(id);
     }
 
     // http://localhost:8080/api/citas/1
@@ -43,12 +44,18 @@ public class CitaController {
 
     // http://localhost:8080/api/citas
     @PutMapping
-    public Cita update(@RequestBody Cita cita){
+    public CitaDTO update(@RequestBody Cita cita){
         Cita citaDb = citaService.findById(cita.getId());
-        citaDb.setMedico(cita.getMedico());
+        citaDb.setPaciente(cita.getPaciente());
         citaDb.setHoraAgendada(cita.getHoraAgendada());
         citaDb.setMotivo(cita.getMotivo());
         citaDb.setFecha(cita.getFecha());
-        return citaService.update(citaDb);
+        return citaService.updateDTO(citaDb);
+    }
+
+    // http://localhost:8080/api/citas/paciente/1
+    @GetMapping("/paciente/{pacienteId}")
+    public List<CitaDTO> obtenerPorPaciente(@PathVariable Long pacienteId) {
+        return citaService.obtenerPorPacienteDTO(pacienteId);
     }
 }

@@ -1,5 +1,6 @@
 package com.medicita.service;
 
+import com.medicita.DTO.CitaDTO;
 import com.medicita.entity.Cita;
 
 import java.util.List;
@@ -24,4 +25,13 @@ public interface CitaService {
     Cita findById(Integer id);
     void deleteById(Integer id);
     Cita update(Cita cita);
+
+    List<Cita> obtenerPorPaciente(Long pacienteId);
+
+    // Nuevos métodos con DTO
+    CitaDTO saveDTO(Cita cita);
+    List<CitaDTO> findAllDTO();
+    CitaDTO findByIdDTO(Integer id);
+    CitaDTO updateDTO(Cita cita);
+    List<CitaDTO> obtenerPorPacienteDTO(Long pacienteId);
 }
