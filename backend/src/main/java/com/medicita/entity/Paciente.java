@@ -35,16 +35,23 @@ public class Paciente {
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Cita> citas = new ArrayList<>();
 
+    // NUEVA RELACIÓN: UN PACIENTE PUEDE TENER MUCHOS PAGOS
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Pago> pagos = new ArrayList<>();
+
     public Paciente() {
     }
 
-    public Paciente(String firstName, String secondName, String userName, String password, int age, int CI, List<Cita> citas) {
+    public Paciente(int id, String firstName, String secondName, String userName, String password, int age, int CI, List<Cita> citas, List<Pago> pagos) {
+        this.id = id;
         this.firstName = firstName;
         this.secondName = secondName;
         this.userName = userName;
         this.password = password;
         this.age = age;
         this.CI = CI;
+        this.citas = citas;
+        this.pagos = pagos;
     }
 
     public int getId() {
@@ -109,5 +116,13 @@ public class Paciente {
 
     public void setCitas(List<Cita> citas) {
         this.citas = citas;
+    }
+
+    public List<Pago> getPagos() {
+        return pagos;
+    }
+
+    public void setPagos(List<Pago> pagos) {
+        this.pagos = pagos;
     }
 }

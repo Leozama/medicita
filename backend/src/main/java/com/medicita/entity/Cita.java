@@ -21,17 +21,22 @@ public class Cita {
     private String motivo;
     private String fecha;
 
+    // NUEVA RELACIÓN: UNA CITA PUEDE TENER UN PAGO
+    @OneToOne(mappedBy = "cita", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Pago pago;
 
 
     public Cita() {
     }
 
-    public Cita(Paciente paciente, Medico medico, String horaAgendada, String motivo, String fecha) {
+    public Cita(int id, Paciente paciente, Medico medico, String horaAgendada, String motivo, String fecha, Pago pago) {
+        this.id = id;
         this.paciente = paciente;
         this.medico = medico;
         this.horaAgendada = horaAgendada;
         this.motivo = motivo;
         this.fecha = fecha;
+        this.pago = pago;
     }
 
     public int getId() {
@@ -77,5 +82,13 @@ public class Cita {
 
     public void setMedico(Medico medico) {
         this.medico = medico;
+    }
+
+    public Pago getPago() {
+        return pago;
+    }
+
+    public void setPago(Pago pago) {
+        this.pago = pago;
     }
 }

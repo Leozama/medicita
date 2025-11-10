@@ -8,8 +8,15 @@ public class Pago {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int id_paciente;
-    private String doctor;
+    // RELACIÓN MUCHOS-A-UNO CON PACIENTE
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "paciente_id", nullable = false)
+    private Paciente paciente;
+
+    // RELACIÓN UNO-A-UNO CON CITA
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "cita_id", nullable = false)
+    private Cita cita;
     private String fecha;
     private String monto;
     private String metodoPago;
@@ -18,10 +25,10 @@ public class Pago {
     public Pago() {
     }
 
-    public Pago(int id, int id_paciente, String doctor, String fecha, String monto, String metodoPago, String estado) {
+    public Pago(int id, Paciente paciente, Cita cita, String fecha, String monto, String metodoPago, String estado) {
         this.id = id;
-        this.id_paciente = id_paciente;
-        this.doctor = doctor;
+        this.paciente = paciente;
+        this.cita = cita;
         this.fecha = fecha;
         this.monto = monto;
         this.metodoPago = metodoPago;
@@ -36,20 +43,20 @@ public class Pago {
         this.id = id;
     }
 
-    public int getId_paciente() {
-        return id_paciente;
+    public Paciente getPaciente() {
+        return paciente;
     }
 
-    public void setId_paciente(int id_paciente) {
-        this.id_paciente = id_paciente;
+    public void setPaciente(Paciente paciente) {
+        this.paciente = paciente;
     }
 
-    public String getDoctor() {
-        return doctor;
+    public Cita getCita() {
+        return cita;
     }
 
-    public void setDoctor(String doctor) {
-        this.doctor = doctor;
+    public void setCita(Cita cita) {
+        this.cita = cita;
     }
 
     public String getFecha() {
