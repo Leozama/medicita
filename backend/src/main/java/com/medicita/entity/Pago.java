@@ -8,79 +8,47 @@ public class Pago {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private int id_paciente;
-    private String doctor;
-    private String fecha;
-    private String monto;
-    private String metodoPago;
-    private String estado; // confirmar
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cita_id", nullable = false)
+    private Cita cita;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "paciente_id", nullable = false)
+    private Paciente paciente;
+
+    private String fechaCita;
+    private Double monto;
+    private String estado; // "PENDIENTE", "PAGADO", "CANCELADO"
 
     public Pago() {
     }
 
-    public Pago(int id, int id_paciente, String doctor, String fecha, String monto, String metodoPago, String estado) {
+    public Pago(int id, Cita cita, Paciente paciente, String fechaCita, Double monto, String estado) {
         this.id = id;
-        this.id_paciente = id_paciente;
-        this.doctor = doctor;
-        this.fecha = fecha;
+        this.cita = cita;
+        this.paciente = paciente;
+        this.fechaCita = fechaCita;
         this.monto = monto;
-        this.metodoPago = metodoPago;
         this.estado = estado;
     }
 
-    public int getId() {
-        return id;
-    }
+    // Getters y Setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public Cita getCita() { return cita; }
+    public void setCita(Cita cita) { this.cita = cita; }
 
-    public int getId_paciente() {
-        return id_paciente;
-    }
+    public Paciente getPaciente() { return paciente; }
+    public void setPaciente(Paciente paciente) { this.paciente = paciente; }
 
-    public void setId_paciente(int id_paciente) {
-        this.id_paciente = id_paciente;
-    }
+    public String getFechaCita() { return fechaCita; }
+    public void setFechaCita(String fechaCita) { this.fechaCita = fechaCita; }
 
-    public String getDoctor() {
-        return doctor;
-    }
+    public Double getMonto() { return monto; }
+    public void setMonto(Double monto) { this.monto = monto; }
 
-    public void setDoctor(String doctor) {
-        this.doctor = doctor;
-    }
-
-    public String getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(String fecha) {
-        this.fecha = fecha;
-    }
-
-    public String getMonto() {
-        return monto;
-    }
-
-    public void setMonto(String monto) {
-        this.monto = monto;
-    }
-
-    public String getMetodoPago() {
-        return metodoPago;
-    }
-
-    public void setMetodoPago(String metodoPago) {
-        this.metodoPago = metodoPago;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 }

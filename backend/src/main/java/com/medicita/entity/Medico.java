@@ -16,20 +16,22 @@ public class Medico {
     private String secondName;
     private String especialidad;
     private String horario;
+    private Double costoConsulta; // NUEVO CAMPO
 
     @OneToMany(mappedBy = "medico", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore // EVITA LA RECURSIÓN
+    @JsonIgnore
     private List<Cita> citas = new ArrayList<>();
 
     public Medico() {
     }
 
-    public Medico(int id, String firstName, String secondName, String especialidad, String horario) {
+    public Medico(int id, String firstName, String secondName, String especialidad, String horario, Double costoConsulta) {
         this.id = id;
         this.firstName = firstName;
         this.secondName = secondName;
         this.especialidad = especialidad;
         this.horario = horario;
+        this.costoConsulta = costoConsulta;
     }
 
     // Getters y Setters
@@ -43,6 +45,8 @@ public class Medico {
     public void setEspecialidad(String especialidad) { this.especialidad = especialidad; }
     public String getHorario() { return horario; }
     public void setHorario(String horario) { this.horario = horario; }
+    public Double getCostoConsulta() { return costoConsulta; }
+    public void setCostoConsulta(Double costoConsulta) { this.costoConsulta = costoConsulta; }
     public List<Cita> getCitas() { return citas; }
     public void setCitas(List<Cita> citas) { this.citas = citas; }
 }

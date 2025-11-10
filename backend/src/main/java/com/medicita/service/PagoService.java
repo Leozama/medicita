@@ -1,13 +1,15 @@
 package com.medicita.service;
 
-import com.medicita.entity.Pago;
+import com.medicita.DTO.PagoRequestDTO;
+import com.medicita.DTO.PagoResponseDTO;
 
 import java.util.List;
 
 public interface PagoService {
-    Pago save(Pago pago);
-    List<Pago> findAll();
-    Pago findById(Integer id);
+    PagoResponseDTO generarPagoPendiente(PagoRequestDTO pagoRequestDTO);
+    List<PagoResponseDTO> findPagosByPaciente(Integer pacienteId);
+    PagoResponseDTO findByIdAsDTO(Integer id);
+    List<PagoResponseDTO> findAllAsDTO();
+    PagoResponseDTO actualizarEstadoPago(Integer pagoId, String nuevoEstado);
     void deleteById(Integer id);
-    Pago update(Pago pago);
 }
