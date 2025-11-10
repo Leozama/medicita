@@ -4,6 +4,7 @@ public class CitaDTO {
 
     private Integer id;
     private PacienteDTO paciente;
+    private MedicoDTO medico;
     private String horaAgendada;
     private String motivo;
     private String fecha;
@@ -12,9 +13,10 @@ public class CitaDTO {
     public CitaDTO() {}
 
     // Constructor con parámetros
-    public CitaDTO(Integer id, PacienteDTO paciente, String horaAgendada, String motivo, String fecha) {
+    public CitaDTO(Integer id, PacienteDTO paciente, MedicoDTO medico, String horaAgendada, String motivo, String fecha) {
         this.id = id;
         this.paciente = paciente;
+        this.medico = medico;
         this.horaAgendada = horaAgendada;
         this.motivo = motivo;
         this.fecha = fecha;
@@ -60,4 +62,13 @@ public class CitaDTO {
     public void setFecha(String fecha) {
         this.fecha = fecha;
     }
+
+    public MedicoDTO getMedico() {
+        return medico;
+    }
+
+    public void setMedico(MedicoDTO medico) {
+        this.medico = medico;
+    }
+
 }

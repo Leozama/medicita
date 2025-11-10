@@ -58,4 +58,10 @@ public class CitaController {
     public List<CitaDTO> obtenerPorPaciente(@PathVariable Long pacienteId) {
         return citaService.obtenerPorPacienteDTO(pacienteId);
     }
+
+    // http://localhost:8080/api/citas/medico/1
+    @GetMapping("/medico/{medicoId}")
+    public List<CitaDTO> obtenerPorMedico(@PathVariable Integer medicoId) {
+        return citaService.obtenerPorMedicoDTO(medicoId);
+    }
 }

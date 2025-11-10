@@ -1,48 +1,38 @@
-package com.medicita.entity;
+package com.medicita.DTO;
 
-import jakarta.persistence.*;
-
-import java.util.ArrayList;
-import java.util.List;
-
-@Entity
-@Table(name = "Medico")
-public class Medico {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+public class MedicoDTO {
+    private Integer id;
     private String firstName;
     private String secondName;
     private String especialidad;
     private String horario;
 
-    @OneToMany(mappedBy = "medico", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Cita>  citas=new ArrayList<>();
+    // Constructor vacío
+    public MedicoDTO() {}
 
-    public Medico() {
-    }
-
-    public Medico(int id, String firstName, String secondName, String especialidad, String horario, List<Cita> citas) {
+    // Constructor con parámetros
+    public MedicoDTO(Integer id, String firstName, String secondName, String especialidad, String horario) {
         this.id = id;
         this.firstName = firstName;
         this.secondName = secondName;
         this.especialidad = especialidad;
         this.horario = horario;
-        this.citas = citas;
     }
 
-    public int getId() {
+    // Getters y Setters
+    public Integer getId() {
         return id;
     }
-    public void setId(int id) {
+
+    public void setId(Integer id) {
         this.id = id;
     }
+
     public String getFirstName() {
         return firstName;
     }
 
     public void setFirstName(String firstName) {
-
         this.firstName = firstName;
     }
 
@@ -51,13 +41,13 @@ public class Medico {
     }
 
     public void setSecondName(String secondName) {
-
         this.secondName = secondName;
     }
 
     public String getEspecialidad() {
         return especialidad;
     }
+
     public void setEspecialidad(String especialidad) {
         this.especialidad = especialidad;
     }
@@ -65,15 +55,8 @@ public class Medico {
     public String getHorario() {
         return horario;
     }
+
     public void setHorario(String horario) {
         this.horario = horario;
     }
-
-    public List<Cita> getCitas() {
-        return citas;
-    }
-    public void setCitas(List<Cita> citas) {
-        this.citas = citas;
-    }
-
 }

@@ -34,4 +34,8 @@ public interface CitaService {
     CitaDTO findByIdDTO(Integer id);
     CitaDTO updateDTO(Cita cita);
     List<CitaDTO> obtenerPorPacienteDTO(Long pacienteId);
+
+    // NUEVO: Obtener citas por médico
+    List<Cita> obtenerPorMedico(Integer medicoId);
+    List<CitaDTO> obtenerPorMedicoDTO(Integer medicoId);
 }

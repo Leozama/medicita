@@ -13,6 +13,10 @@ public class Cita {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "paciente_id", nullable = false)
     private Paciente paciente;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "medico_id", nullable = false)
+    private Medico medico;
     private String horaAgendada;
     private String motivo;
     private String fecha;
@@ -22,8 +26,9 @@ public class Cita {
     public Cita() {
     }
 
-    public Cita(Paciente paciente, String horaAgendada, String motivo, String fecha) {
+    public Cita(Paciente paciente, Medico medico, String horaAgendada, String motivo, String fecha) {
         this.paciente = paciente;
+        this.medico = medico;
         this.horaAgendada = horaAgendada;
         this.motivo = motivo;
         this.fecha = fecha;
@@ -64,5 +69,13 @@ public class Cita {
 
     public void setPaciente(Paciente paciente) {
         this.paciente = paciente;
+    }
+
+    public Medico getMedico() {
+        return medico;
+    }
+
+    public void setMedico(Medico medico) {
+        this.medico = medico;
     }
 }

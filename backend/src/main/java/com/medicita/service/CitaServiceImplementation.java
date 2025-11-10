@@ -1,6 +1,7 @@
 package com.medicita.service;
 
 import com.medicita.DTO.CitaDTO;
+import com.medicita.DTO.MedicoDTO;
 import com.medicita.DTO.PacienteDTO;
 import com.medicita.entity.Cita;
 import com.medicita.repository.CitaRepository;
@@ -82,20 +83,41 @@ public class CitaServiceImplementation implements CitaService {
                 .collect(Collectors.toList());
     }
 
-    // METODO DE CONVERSIÓN ACTUALIZADO (con PacienteDTO)
+    @Override
+    public List<Cita> obtenerPorMedico(Integer medicoId) {
+        return citaRepository.findByMedicoId(medicoId);
+    }
+
+    @Override
+    public List<CitaDTO> obtenerPorMedicoDTO(Integer medicoId) {
+        return citaRepository.findByMedicoId(medicoId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    // METODO DE CONVERSIÓN ACTUALIZADO (con PacienteDTO y MedicoDTO)
     private CitaDTO convertToDTO(Cita cita) {
         CitaDTO dto = new CitaDTO();
         dto.setId(cita.getId());
 
-        // Crear PacienteDTO con todos los datos del paciente
+        // Crear PacienteDTO
         PacienteDTO pacienteDTO = new PacienteDTO();
         pacienteDTO.setId(cita.getPaciente().getId());
         pacienteDTO.setFirstName(cita.getPaciente().getFirstName());
         pacienteDTO.setSecondName(cita.getPaciente().getSecondName());
         pacienteDTO.setAge(cita.getPaciente().getAge());
         pacienteDTO.setCi(cita.getPaciente().getCI());
-
         dto.setPaciente(pacienteDTO);
+
+        // NUEVO: Crear MedicoDTO
+        MedicoDTO medicoDTO = new MedicoDTO();
+        medicoDTO.setId(cita.getMedico().getId());
+        medicoDTO.setFirstName(cita.getMedico().getFirstName());
+        medicoDTO.setSecondName(cita.getMedico().getSecondName());
+        medicoDTO.setEspecialidad(cita.getMedico().getEspecialidad());
+        medicoDTO.setHorario(cita.getMedico().getHorario());
+        dto.setMedico(medicoDTO);
+
         dto.setHoraAgendada(cita.getHoraAgendada());
         dto.setMotivo(cita.getMotivo());
         dto.setFecha(cita.getFecha());
