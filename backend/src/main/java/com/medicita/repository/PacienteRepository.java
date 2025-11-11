@@ -30,4 +30,7 @@ import java.util.Optional;
 public interface PacienteRepository extends JpaRepository<Paciente, Integer> {
     @Query("SELECT p FROM Paciente p LEFT JOIN FETCH p.citas WHERE p.id = :id")
     Optional<Paciente> findByIdWithCitas(Integer id);
+
+    // AGREGAR ESTE MÉTODO NUEVO:
+    Optional<Paciente> findByUserName(String userName);
 }
