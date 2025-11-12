@@ -60,4 +60,9 @@ export class HeaderComponent implements OnInit {
   irALogin() {
   this.router.navigate(['/login']);
   }
+
+  isLoginPage(): boolean {
+    return this.router.url === '/login' || this.router.url === '/auth/login';
+  }
+  
 }
