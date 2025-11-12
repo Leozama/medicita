@@ -21,6 +21,7 @@ public class Cita {
 
     private String horaAgendada;
     private String motivo;
+    private String estado; // p.ej. ACTIVA, CANCELADA
     private String fecha;
 
     public Cita() {
@@ -33,6 +34,7 @@ public class Cita {
         this.horaAgendada = horaAgendada;
         this.motivo = motivo;
         this.fecha = fecha;
+        this.estado = "ACTIVA";
     }
 
     // Getters y Setters
@@ -46,6 +48,8 @@ public class Cita {
     public void setHoraAgendada(String horaAgendada) { this.horaAgendada = horaAgendada; }
     public String getMotivo() { return motivo; }
     public void setMotivo(String motivo) { this.motivo = motivo; }
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
     public String getFecha() { return fecha; }
     public void setFecha(String fecha) { this.fecha = fecha; }
 

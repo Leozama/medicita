@@ -158,9 +158,18 @@ public class CitaServiceImplementation implements CitaService {
 
     // Método para obtener una cita por ID como DTO
     public CitaResponseDTO findByIdAsDTO(Integer id) {
-        Cita cita = citaRepository.findByIdWithMedicoAndPaciente(id)
-                .orElseThrow(() -> new RuntimeException("Cita no encontrada con ID: " + id));
+    Cita cita = citaRepository.findByIdWithMedicoAndPaciente(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada con ID: " + id));
         return convertirCitaAResponseDTO(cita);
+    }
+
+    // Método para actualizar el estado de una cita
+    public CitaResponseDTO updateEstadoCita(Integer id, String estado) {
+    Cita cita = citaRepository.findByIdWithMedicoAndPaciente(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada con ID: " + id));
+    cita.setEstado(estado);
+    Cita saved = citaRepository.save(cita);
+    return convertirCitaAResponseDTO(saved);
     }
 
     // Método para obtener citas por paciente
@@ -198,6 +207,9 @@ public class CitaServiceImplementation implements CitaService {
             dto.setNombrePaciente("Paciente no asignado");
             dto.setEmailPaciente("No especificado");
         }
+
+        // Estado
+        dto.setEstado(cita.getEstado() != null ? cita.getEstado() : "ACTIVA");
 
         return dto;
     }
