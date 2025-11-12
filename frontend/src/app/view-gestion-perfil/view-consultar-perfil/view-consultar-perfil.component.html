@@ -1,0 +1,49 @@
+<div class="dialog" *ngIf="isOpen">
+  <div class="dialog-content">
+    <h2 class="dialog-title">Perfil del Administrador</h2>
+
+    <div class="profile-section">
+      <!-- Foto de perfil -->
+      <div class="photo-container">
+        <div class="avatar">
+          <img *ngIf="profilePhoto" [src]="profilePhoto" alt="Foto de perfil" />
+          <div *ngIf="!profilePhoto" class="avatar-fallback">
+            <span class="icon-user">👤</span>
+          </div>
+        </div>
+
+        <label class="upload-label">
+          <span>Adjuntar foto</span>
+          <input type="file" accept="image/*" (change)="handleFileChange($event)" hidden />
+        </label>
+      </div>
+
+      <!-- Información -->
+      <div class="info-section">
+        <div>
+          <p class="label">Nombre de usuario</p>
+          <p class="value">{{ username }}</p>
+        </div>
+
+        <div>
+          <p class="label">Contraseña</p>
+          <div class="password-row">
+            <p class="value">
+              {{ showPassword ? password : '•'.repeat(password.length) }}
+            </p>
+            <button type="button" (click)="togglePassword()" class="toggle-btn">
+              {{ showPassword ? '👁️‍🗨️ Ocultar' : '👁️ Mostrar' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="button-row">
+      <button (click)="onClose()" class="btn-primary">Aceptar</button>
+      <button (click)="onClose()" class="btn-outline">Salir</button>
+    </div>
+  </div>
+</div>
+

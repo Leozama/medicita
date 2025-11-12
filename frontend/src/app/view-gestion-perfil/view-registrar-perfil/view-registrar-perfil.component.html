@@ -1,0 +1,51 @@
+<div class="login-container">
+  <div class="card">
+    <div class="card-header">
+      <div class="icon-container">
+        <div class="icon-circle">
+          <i class="fa-solid fa-hospital"></i>
+        </div>
+      </div>
+      <h2>Iniciar Sesión</h2>
+      <p class="description">Accede a tu cuenta de paciente o administrador</p>
+    </div>
+
+    <form (ngSubmit)="handleSubmit()">
+      <div class="card-content">
+        <div class="input-group">
+          <label for="email">Usuario / Correo Electrónico</label>
+          <input
+            id="email"
+            type="text"
+            [(ngModel)]="email"
+            name="email"
+            placeholder="tu@email.com"
+            required
+          />
+        </div>
+
+        <div class="input-group">
+          <label for="password">Contraseña</label>
+          <input
+            id="password"
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            placeholder="••••••••"
+            required
+          />
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <button type="submit" class="btn-primary">Iniciar Sesión</button>
+
+        <div class="register-link">
+          <span>¿No tienes cuenta?</span>
+          <a (click)="switchToRegister()"> Crear perfil</a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+

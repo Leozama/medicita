@@ -1,0 +1,43 @@
+<div class="container">
+  <h2>Gestión de Médicos - Agregar Médico</h2>
+
+  <button class="btn-primary" (click)="openForm()">Agregar médico</button>
+
+  <!-- Lista de médicos -->
+  <div *ngIf="doctors.length > 0; else noDoctors">
+    <div class="doctor-card" *ngFor="let doctor of doctors">
+      <div class="photo">
+        <img *ngIf="doctor.photo" [src]="doctor.photo" alt="{{ doctor.name }}">
+        <div *ngIf="!doctor.photo" class="placeholder">🩺</div>
+      </div>
+      <p><strong>{{ doctor.name }}</strong></p>
+      <p>{{ doctor.specialtyName }} ({{ doctor.experience }})</p>
+    </div>
+  </div>
+
+  <ng-template #noDoctors>
+    <p class="no-data">No hay médicos registrados aún.</p>
+  </ng-template>
+
+  <!-- Formulario para agregar médico -->
+  <div *ngIf="showForm" class="modal">
+    <div class="modal-content">
+      <h3>Registrar nuevo médico</h3>
+
+      <label>Nombre:</label>
+      <input [(ngModel)]="newDoctor.name" placeholder="Nombre completo">
+
+      <label>Especialidad:</label>
+      <input [(ngModel)]="newDoctor.specialtyName" placeholder="Especialidad médica">
+
+      <label>Experiencia:</label>
+      <input [(ngModel)]="newDoctor.experience" placeholder="Ej: 5 años">
+
+      <div class="buttons">
+        <button class="btn-primary" (click)="addDoctor()">Guardar</button>
+        <button class="btn-secondary" (click)="closeForm()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+

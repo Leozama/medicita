@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, CommonModule],
+  imports: [CommonModule],
   template: `
     <header class="bg-white shadow-sm border-b">
       <nav class="container mx-auto px-4 py-4">
@@ -14,7 +13,7 @@ import { CommonModule } from '@angular/common';
           <div class="flex items-center space-x-4">
             <!-- Avatar del Usuario -->
             <div class="relative">
-              <button 
+              <button
                 (click)="openUserSidebar()"
                 class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
               >
@@ -22,7 +21,7 @@ import { CommonModule } from '@angular/common';
                   {{ getIniciales() }}
                 </div>
                 <span class="hidden md:block text-gray-700 font-medium">Juan Pérez</span>
-               
+
               </button>
             </div>
 
@@ -42,32 +41,32 @@ import { CommonModule } from '@angular/common';
             <button class="hidden md:block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
               Cerrar Sesión
             </button>
-            
+
                       </div>
         </div>
       </nav>
     </header>
 
     <!-- Barra Lateral del Usuario -->
-    <div 
+    <div
       *ngIf="showUserSidebar"
       class="fixed inset-0 z-50 flex"
     >
       <!-- Overlay -->
-      <div 
+      <div
         class="fixed inset-0 bg-black/60 "
         (click)="closeUserSidebar()"
       ></div>
-      
+
       <!-- Sidebar -->
-      <div 
+      <div
         class="relative w-80 bg-white shadow-xl h-full animate-slide-in-left"
       >
         <!-- Header del Sidebar -->
         <div class="bg-blue-600 text-white p-6">
           <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-bold">Mi Perfil</h2>
-            <button 
+            <button
               (click)="closeUserSidebar()"
               class="text-white hover:text-blue-200 transition-colors"
             >
@@ -76,7 +75,7 @@ import { CommonModule } from '@angular/common';
               </svg>
             </button>
           </div>
-          
+
           <!-- Avatar e Info -->
           <div class="flex items-center space-x-4">
             <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-blue-900 font-bold text-xl">
@@ -97,7 +96,7 @@ import { CommonModule } from '@angular/common';
             <div class="space-y-2 text-sm">
               <div class="flex justify-between">
                 <span class="text-gray-600">Email:</span>
-                <span class="text-gray-800">juan.perez@email.com</span>
+                <span class="text-gray-800">juan.perez(arroba symbol)email.com</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">Teléfono:</span>
@@ -114,7 +113,7 @@ import { CommonModule } from '@angular/common';
             </div>
           </div>
 
-          
+
 
           <!-- Citas Programadas -->
           <div>
@@ -136,7 +135,7 @@ import { CommonModule } from '@angular/common';
       </div>
     </div>
   `
- 
+
 })
 export class HeaderComponent {
   showUserSidebar = false;

@@ -1,0 +1,108 @@
+<div class="container mx-auto max-w-6xl">
+  <div class="flex items-center gap-4 mb-6">
+    <button class="btn btn-ghost" (click)="//Aqui puedes agregar navegacion atras>
+    </button>
+    <div>
+      <h2 class="text-blue-900 text-xl font-semibold">Confirmación de pagos</h2>
+      <p class="text-sm text-gray-600">{{ paymentsList.length }} transacciones registradas</p>
+    </div>
+  </div>
+
+  <!-- Tarjetas de pagos -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div *ngFor="let payment of paymentsList"
+         class="card cursor-pointer hover:shadow-lg transition-shadow p-4 border rounded"
+         (click)="selectedPayment = payment">
+
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-base font-semibold">{{ payment.patientName }}</h3>
+        <span [class]="getStatusBadgeClass(payment.status)">
+          {{ payment.status === 'paid' ? 'Pagado' : payment.status === 'pending' ? 'Pendiente' : 'Cancelado' }}
+        </span>
+      </div>
+
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between">
+          <span class="text-gray-600">Monto de la cita:</span>
+          <span class="text-blue-600">€{{ payment.amount.toFixed(2) }}</span>
+        </div>
+
+        <div class="flex justify-between">
+          <span class="text-gray-600">Fecha de registro:</span>
+          <span>{{ formatDate(payment.paymentDate || payment.date) }}</span>
+        </div>
+
+        <div *ngIf="payment.paymentReference" class="border-t pt-2 text-xs text-gray-500">
+          <p>Referencia:</p>
+          <p class="bg-blue-50 text-blue-700 px-2 py-1 rounded mt-1">{{ payment.paymentReference }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Si no hay registros -->
+  <div *ngIf="paymentsList.length === 0" class="text-center py-12 text-gray-500">
+    No se encontraron registros de pago
+  </div>
+
+  <!-- Modal (simulación básica) -->
+  <div *ngIf="selectedPayment" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-lg p-6">
+      <h3 class="text-lg font-semibold mb-4">Detalles del Pago</h3>
+
+      <div class="grid grid-cols-2 gap-4 text-sm">
+        <div>
+          <p class="text-gray-500">ID de Pago</p>
+          <p>{{ selectedPayment.id }}</p>
+        </div>
+        <div>
+          <p class="text-gray-500">Estado Actual</p>
+          <span [class]="getStatusBadgeClass(selectedPayment.status)">
+            {{ selectedPayment.status }}
+          </span>
+        </div>
+      </div>
+
+      <div class="p-4 bg-gray-50 rounded-lg mt-4">
+        <p class="text-gray-600 mb-2">Información del Paciente</p>
+        <p><strong>{{ selectedPayment.patientName }}</strong></p>
+        <p class="text-gray-600">{{ selectedPayment.patientId }}</p>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4 mt-4">
+        <div>
+          <p class="text-gray-500">Doctor</p>
+          <p>{{ selectedPayment.doctorName }}</p>
+        </div>
+        <div>
+          <p class="text-gray-500">Especialidad</p>
+          <p>{{ selectedPayment.specialty }}</p>
+        </div>
+      </div>
+
+      <div class="p-4 bg-blue-50 rounded-lg mt-4">
+        <div class="flex justify-between mb-2">
+          <span class="text-gray-600">Monto</span>
+          <span class="text-2xl text-blue-600">€{{ selectedPayment.amount.toFixed(2) }}</span>
+        </div>
+        <div *ngIf="selectedPayment.paymentReference" class="border-t pt-2">
+          <p class="text-sm text-gray-600">Referencia:</p>
+          <p class="bg-white px-2 py-1 rounded mt-1">{{ selectedPayment.paymentReference }}</p>
+          <p *ngIf="selectedPayment.paymentDate" class="text-xs text-gray-500 mt-1">
+            Registrado: {{ formatDate(selectedPayment.paymentDate) }}
+          </p>
+        </div>
+      </div>
+
+      <div class="flex gap-2 mt-6 justify-end">
+        <button class="btn btn-outline" (click)="handleChangeStatus(selectedPayment.id, 'pending')"
+                [disabled]="selectedPayment.status === 'pending'">Pendiente</button>
+        <button class="btn btn-outline text-green-600" (click)="handleChangeStatus(selectedPayment.id, 'paid')"
+                [disabled]="selectedPayment.status === 'paid'">Pagado</button>
+        <button class="btn btn-outline text-red-600" (click)="handleChangeStatus(selectedPayment.id, 'cancelled')"
+                [disabled]="selectedPayment.status === 'cancelled'">Cancelado</button>
+        <button class="btn btn-outline" (click)="selectedPayment = null">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

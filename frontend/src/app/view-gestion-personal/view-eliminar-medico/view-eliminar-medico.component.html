@@ -1,0 +1,28 @@
+<div class="container">
+  <h2>Gestión de Médicos - Eliminar Médico</h2>
+
+  <div *ngIf="doctors.length > 0; else noDoctors">
+    <div
+      class="doctor-card"
+      *ngFor="let doctor of doctors"
+      [class.selected]="selectedDoctor === doctor"
+      (click)="selectDoctor(doctor)"
+    >
+      <div class="photo">
+        <img *ngIf="doctor.photo" [src]="doctor.photo" alt="{{ doctor.name }}">
+        <div *ngIf="!doctor.photo" class="placeholder">🩺</div>
+      </div>
+      <p><strong>{{ doctor.name }}</strong></p>
+      <p>{{ doctor.specialtyName }} ({{ doctor.experience }})</p>
+    </div>
+
+    <div class="buttons">
+      <button class="btn-danger" (click)="deleteDoctor()">Eliminar médico</button>
+    </div>
+  </div>
+
+  <ng-template #noDoctors>
+    <p class="no-data">No hay médicos registrados.</p>
+  </ng-template>
+</div>
+
