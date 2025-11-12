@@ -8,12 +8,13 @@ public class CitaResponseDTO {
     private String emailPaciente;
     private String horaAgendada;
     private String motivo;
+    private String estado;
     private String fecha;
 
     public CitaResponseDTO() {
     }
 
-    public CitaResponseDTO(int id, String nombreMedico, String especialidad, String nombrePaciente, String emailPaciente, String horaAgendada, String motivo, String fecha) {
+    public CitaResponseDTO(int id, String nombreMedico, String especialidad, String nombrePaciente, String emailPaciente, String horaAgendada, String motivo, String estado, String fecha) {
         this.id = id;
         this.nombreMedico = nombreMedico;
         this.especialidad = especialidad;
@@ -21,6 +22,7 @@ public class CitaResponseDTO {
         this.emailPaciente = emailPaciente;
         this.horaAgendada = horaAgendada;
         this.motivo = motivo;
+        this.estado = estado;
         this.fecha = fecha;
     }
 
@@ -84,6 +86,9 @@ public class CitaResponseDTO {
     public String getFecha() {
         return fecha;
     }
+
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 
     public void setFecha(String fecha) {
         this.fecha = fecha;

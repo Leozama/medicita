@@ -2,7 +2,9 @@ package com.medicita.service;
 
 import com.medicita.entity.Paciente;
 import com.medicita.repository.PacienteRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -21,10 +23,11 @@ public class AuthService {
         if (pacienteOpt.isPresent()) {
             Paciente paciente = pacienteOpt.get();
             // Comparación simple de contraseñas (para demo universidad)
-            if (paciente.getPassword().equals(password)) {
+            if (paciente.getPassword() != null && paciente.getPassword().equals(password)) {
                 return paciente; // Login exitoso
             }
         }
-        throw new RuntimeException("Usuario o contraseña incorrectos");
+        // Lanzar excepción con status 401 en lugar de RuntimeException para evitar 500
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario o contraseña incorrectos");
     }
 }

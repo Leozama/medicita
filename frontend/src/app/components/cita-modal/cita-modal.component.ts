@@ -53,7 +53,16 @@ export class CitaModalComponent implements OnInit {
 
   confirmarCita() {
     if (this.citaData) {
-      this.citaService.confirmarCita(this.citaData);
+      // Intentar crear la cita en el backend
+      this.citaService.confirmarCitaBackend(this.citaData).subscribe(success => {
+        if (success) {
+          this.citaService.cerrarModal();
+          alert(`✅ Cita agendada correctamente para ${this.citaData?.fecha} a las ${this.citaData?.hora}`);
+        } else {
+          // Si falla (no autenticado o error backend), mostrar mensaje y mantener modal abierto
+          alert('❌ No se pudo agendar la cita. Verifica tu conexión o inicia sesión.');
+        }
+      });
     }
   }
 

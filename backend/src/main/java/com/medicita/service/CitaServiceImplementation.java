@@ -8,8 +8,10 @@ import com.medicita.entity.Paciente;
 import com.medicita.repository.CitaRepository;
 import com.medicita.repository.MedicoRepository;
 import com.medicita.repository.PacienteRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,18 +34,18 @@ public class CitaServiceImplementation implements CitaService {
     public Cita save(Cita cita) {
         // Validar que el médico y paciente existen
         if (cita.getMedico() == null || cita.getMedico().getId() == 0) {
-            throw new RuntimeException("Médico es requerido");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Médico es requerido");
         }
         if (cita.getPaciente() == null || cita.getPaciente().getId() == 0) {
-            throw new RuntimeException("Paciente es requerido");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Paciente es requerido");
         }
 
         // Cargar el médico y paciente completos desde la base de datos
         Medico medico = medicoRepository.findById(cita.getMedico().getId())
-                .orElseThrow(() -> new RuntimeException("Médico no encontrado con ID: " + cita.getMedico().getId()));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Médico no encontrado con ID: " + cita.getMedico().getId()));
 
-        Paciente paciente = pacienteRepository.findById(cita.getPaciente().getId())
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado con ID: " + cita.getPaciente().getId()));
+    Paciente paciente = pacienteRepository.findById(cita.getPaciente().getId())
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Paciente no encontrado con ID: " + cita.getPaciente().getId()));
 
         cita.setMedico(medico);
         cita.setPaciente(paciente);
@@ -55,19 +57,19 @@ public class CitaServiceImplementation implements CitaService {
     public CitaResponseDTO createCitaFromDTO(CitaRequestDTO citaRequestDTO) {
         // Validar que los IDs no sean nulos
         if (citaRequestDTO.getMedicoId() == null) {
-            throw new RuntimeException("ID de médico es requerido");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID de médico es requerido");
         }
         if (citaRequestDTO.getPacienteId() == null) {
-            throw new RuntimeException("ID de paciente es requerido");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID de paciente es requerido");
         }
 
         // Buscar el médico en la base de datos
         Medico medico = medicoRepository.findById(citaRequestDTO.getMedicoId())
-                .orElseThrow(() -> new RuntimeException("Médico no encontrado con ID: " + citaRequestDTO.getMedicoId()));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Médico no encontrado con ID: " + citaRequestDTO.getMedicoId()));
 
         // Buscar el paciente en la base de datos
         Paciente paciente = pacienteRepository.findById(citaRequestDTO.getPacienteId())
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado con ID: " + citaRequestDTO.getPacienteId()));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Paciente no encontrado con ID: " + citaRequestDTO.getPacienteId()));
 
         // Crear y guardar la cita
         Cita cita = new Cita();
@@ -85,14 +87,14 @@ public class CitaServiceImplementation implements CitaService {
 
     // Método para actualizar con DTO
     public Cita updateCitaFromDTO(Integer id, CitaRequestDTO citaRequestDTO) {
-        Cita citaExistente = citaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cita no encontrada con ID: " + id));
+    Cita citaExistente = citaRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada con ID: " + id));
 
         Medico medico = medicoRepository.findById(citaRequestDTO.getMedicoId())
-                .orElseThrow(() -> new RuntimeException("Médico no encontrado con ID: " + citaRequestDTO.getMedicoId()));
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Médico no encontrado con ID: " + citaRequestDTO.getMedicoId()));
 
-        Paciente paciente = pacienteRepository.findById(citaRequestDTO.getPacienteId())
-                .orElseThrow(() -> new RuntimeException("Paciente no encontrado con ID: " + citaRequestDTO.getPacienteId()));
+    Paciente paciente = pacienteRepository.findById(citaRequestDTO.getPacienteId())
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Paciente no encontrado con ID: " + citaRequestDTO.getPacienteId()));
 
         citaExistente.setMedico(medico);
         citaExistente.setPaciente(paciente);
@@ -112,8 +114,8 @@ public class CitaServiceImplementation implements CitaService {
     @Override
     @Transactional(readOnly = true)
     public Cita findById(Integer id) {
-        return citaRepository.findByIdWithMedicoAndPaciente(id)
-                .orElseThrow(() -> new RuntimeException("Cita no encontrada con ID: " + id));
+    return citaRepository.findByIdWithMedicoAndPaciente(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada con ID: " + id));
     }
 
     @Override
@@ -125,19 +127,19 @@ public class CitaServiceImplementation implements CitaService {
     public Cita update(Cita cita) {
         // Verificar que la cita existe
         Cita citaExistente = citaRepository.findByIdWithMedicoAndPaciente(cita.getId())
-                .orElseThrow(() -> new RuntimeException("Cita no encontrada con ID: " + cita.getId()));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada con ID: " + cita.getId()));
 
         // Si se está actualizando el médico, cargarlo completo
         if (cita.getMedico() != null) {
             Medico medico = medicoRepository.findById(cita.getMedico().getId())
-                    .orElseThrow(() -> new RuntimeException("Médico no encontrado con ID: " + cita.getMedico().getId()));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Médico no encontrado con ID: " + cita.getMedico().getId()));
             citaExistente.setMedico(medico);
         }
 
         // Si se está actualizando el paciente, cargarlo completo
         if (cita.getPaciente() != null) {
             Paciente paciente = pacienteRepository.findById(cita.getPaciente().getId())
-                    .orElseThrow(() -> new RuntimeException("Paciente no encontrado con ID: " + cita.getPaciente().getId()));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Paciente no encontrado con ID: " + cita.getPaciente().getId()));
             citaExistente.setPaciente(paciente);
         }
 
@@ -156,9 +158,18 @@ public class CitaServiceImplementation implements CitaService {
 
     // Método para obtener una cita por ID como DTO
     public CitaResponseDTO findByIdAsDTO(Integer id) {
-        Cita cita = citaRepository.findByIdWithMedicoAndPaciente(id)
-                .orElseThrow(() -> new RuntimeException("Cita no encontrada con ID: " + id));
+    Cita cita = citaRepository.findByIdWithMedicoAndPaciente(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada con ID: " + id));
         return convertirCitaAResponseDTO(cita);
+    }
+
+    // Método para actualizar el estado de una cita
+    public CitaResponseDTO updateEstadoCita(Integer id, String estado) {
+    Cita cita = citaRepository.findByIdWithMedicoAndPaciente(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada con ID: " + id));
+    cita.setEstado(estado);
+    Cita saved = citaRepository.save(cita);
+    return convertirCitaAResponseDTO(saved);
     }
 
     // Método para obtener citas por paciente
@@ -196,6 +207,9 @@ public class CitaServiceImplementation implements CitaService {
             dto.setNombrePaciente("Paciente no asignado");
             dto.setEmailPaciente("No especificado");
         }
+
+        // Estado
+        dto.setEstado(cita.getEstado() != null ? cita.getEstado() : "ACTIVA");
 
         return dto;
     }

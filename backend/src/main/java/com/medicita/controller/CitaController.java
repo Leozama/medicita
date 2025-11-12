@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/citas")
+@CrossOrigin(origins = "http://localhost:4200")
 public class CitaController {
 
     private final CitaServiceImplementation citaServiceImplementation;
@@ -77,5 +78,17 @@ public class CitaController {
     @GetMapping("/paciente/{pacienteId}")
     public List<CitaResponseDTO> getCitasByPaciente(@PathVariable Integer pacienteId) {
         return citaServiceImplementation.findCitasByPaciente(pacienteId);
+    }
+
+    // NUEVO: Actualizar estado de una cita (p.ej. CANCELADA)
+    @PutMapping("/dto/{id}/estado")
+    public CitaResponseDTO updateEstado(@PathVariable Integer id, @RequestBody EstadoUpdateRequest req) {
+        return citaServiceImplementation.updateEstadoCita(id, req.getEstado());
+    }
+
+    public static class EstadoUpdateRequest {
+        private String estado;
+        public String getEstado() { return estado; }
+        public void setEstado(String estado) { this.estado = estado; }
     }
 }

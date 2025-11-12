@@ -55,7 +55,7 @@ export class LoginComponent {
           // ✅ La redirección ahora se maneja automáticamente en el AuthService
           // según el tipo de usuario
         } else {
-          this.error = 'Credenciales incorrectas. Usa: admin@demo.com / 1234 para admin o user@demo.com / 1234 para paciente';
+          this.error = 'Credenciales incorrectas o error de autenticación. Verifica usuario/contraseña.';
         }
       },
       error: (error) => {
