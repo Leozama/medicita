@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { CitaService } from '../../services/cita.service';
 import { CitaModalComponent } from '../../components/cita-modal/cita-modal.component';
 
-// Interface para el médico
+// Interface para el medico
 interface Medico {
   id: number;
   nombre: string;
@@ -177,7 +177,7 @@ export class EspecialidadComponent implements OnInit {
     
     // Verifica si el modal se abre
     this.citaService.mostrarModal$.subscribe(estado => {
-        console.log('🔴 DEBUG: Estado del modal:', estado);
+        console.log('DEBUG: Estado del modal:', estado);
     });
     }
     
