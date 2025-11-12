@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-// Modelo de pago (equivalente a Payment en React)
+// Modelo de pago
 interface Payment {
   id: string;
   patientName: string;
@@ -21,8 +21,11 @@ interface Payment {
   styleUrls: ['./view-confirmar-pagos.component.css']
 })
 export class ViewConfirmarPagosComponent {
+  goBack() {
+      throw new Error("Method not implemented.");
+  }
 
-  // Lista de pagos (puedes traerla de un servicio más adelante)
+  // Lista de pagos (puede traerla de un servicio más adelante)
   paymentsList: Payment[] = [
     {
       id: 'P001',

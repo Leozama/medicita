@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import {FormsModule} from '@angular/forms';
+
 
 interface Doctor {
   id: string;
@@ -11,6 +13,9 @@ interface Doctor {
 @Component({
   selector: 'app-view-agregar-medico',
   templateUrl: './view-agregar-medico.component.html',
+  imports: [
+    FormsModule
+  ],
   styleUrls: ['./view-agregar-medico.component.css']
 })
 export class ViewAgregarMedicoComponent {

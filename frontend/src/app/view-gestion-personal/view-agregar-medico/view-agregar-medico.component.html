@@ -7,7 +7,7 @@
   <div *ngIf="doctors.length > 0; else noDoctors">
     <div class="doctor-card" *ngFor="let doctor of doctors">
       <div class="photo">
-        <img *ngIf="doctor.photo" [src]="doctor.photo" alt="{{ doctor.name }}">
+        <img *ngIf="doctor.photo" [src]="doctor.photo" [alt]="doctor.name">
         <div *ngIf="!doctor.photo" class="placeholder">🩺</div>
       </div>
       <p><strong>{{ doctor.name }}</strong></p>
@@ -24,14 +24,38 @@
     <div class="modal-content">
       <h3>Registrar nuevo médico</h3>
 
-      <label>Nombre:</label>
-      <input [(ngModel)]="newDoctor.name" placeholder="Nombre completo">
+      <div class="form-group">
+        <label for="doctorName">Nombre:</label>
+        <input
+          id="doctorName"
+          type="text"
+          [(ngModel)]="newDoctor.name"
+          name="doctorName"
+          placeholder="Nombre completo"
+          required>
+      </div>
 
-      <label>Especialidad:</label>
-      <input [(ngModel)]="newDoctor.specialtyName" placeholder="Especialidad médica">
+      <div class="form-group">
+        <label for="specialty">Especialidad:</label>
+        <input
+          id="specialty"
+          type="text"
+          [(ngModel)]="newDoctor.specialtyName"
+          name="specialty"
+          placeholder="Especialidad médica"
+          required>
+      </div>
 
-      <label>Experiencia:</label>
-      <input [(ngModel)]="newDoctor.experience" placeholder="Ej: 5 años">
+      <div class="form-group">
+        <label for="experience">Experiencia:</label>
+        <input
+          id="experience"
+          type="text"
+          [(ngModel)]="newDoctor.experience"
+          name="experience"
+          placeholder="Ej: 5 años"
+          required>
+      </div>
 
       <div class="buttons">
         <button class="btn-primary" (click)="addDoctor()">Guardar</button>
@@ -40,4 +64,3 @@
     </div>
   </div>
 </div>
-
