@@ -33,6 +33,19 @@ export class HeaderComponent implements OnInit {
     });
   }
 
+  cancelCita(citaId: number) {
+    if (!this.currentUser) return;
+    const ok = confirm('¿Estás seguro que quieres cancelar esta cita?');
+    if (!ok) return;
+    this.citaService.deleteCita(citaId, this.currentUser.id).subscribe(success => {
+      if (success) {
+        alert('Cita cancelada correctamente');
+      } else {
+        alert('No se pudo cancelar la cita. Intenta nuevamente.');
+      }
+    });
+  }
+
   getIniciales(): string {
     if (this.currentUser?.nombre) {
       return this.currentUser.nombre

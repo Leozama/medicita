@@ -116,6 +116,21 @@ export class CitaService {
     this.getCitasByPaciente(pacienteId).subscribe(list => this.citasPacienteSource.next(list));
   }
 
+  /** Eliminar una cita por id y refrescar la lista del paciente */
+  deleteCita(citaId: number, pacienteId: number): Observable<boolean> {
+    return this.http.delete<void>(`${this.baseUrl}/${citaId}`).pipe(
+      map(() => {
+        // refrescar lista
+        this.refreshCitasPaciente(pacienteId);
+        return true;
+      }),
+      catchError(err => {
+        console.error('Error eliminando cita:', err);
+        return of(false);
+      })
+    );
+  }
+
   confirmarCita(citaData: CitaData) {
     console.log('🟢 SERVICIO: Confirmando cita (local):', citaData);
     this.cerrarModal();
