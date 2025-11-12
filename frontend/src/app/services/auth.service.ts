@@ -1,3 +1,4 @@
+// services/auth.service.ts
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, of } from 'rxjs';
@@ -80,6 +81,13 @@ export class AuthService {
   private setUser(user: User): void {
     localStorage.setItem('currentUser', JSON.stringify(user));
     this.currentUserSubject.next(user);
+    
+    // Redirigir según el tipo de usuario después del login
+    if (user.tipo === 'admin') {
+      this.router.navigate(['/dashboard']);
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 
   private getUserFromStorage(): User | null {

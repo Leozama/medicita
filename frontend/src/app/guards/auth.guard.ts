@@ -1,3 +1,4 @@
+// guards/auth.guard.ts
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
@@ -10,10 +11,19 @@ export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router) {}
 
   canActivate(): boolean {
-    if (this.authService.isLoggedIn()) {
-      return true; // Permitir acceso si está autenticado
+    const user = this.authService.getCurrentUser();
+    
+    if (user) {
+      // Si es admin, redirigir al dashboard
+      if (user.tipo === 'admin') {
+        this.router.navigate(['/dashboard']);
+        return false;
+      }
+      // Si es paciente, permitir acceso a la página principal
+      return true;
     } else {
-      this.router.navigate(['/login']); // Redirigir al login si no está autenticado
+      // Si no está logueado, redirigir al login
+      this.router.navigate(['/login']);
       return false;
     }
   }

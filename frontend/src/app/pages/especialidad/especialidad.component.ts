@@ -67,7 +67,7 @@ export class EspecialidadComponent implements OnInit {
     
     // Verifica si el modal se abre
     this.citaService.mostrarModal$.subscribe(estado => {
-        console.log('🔴 DEBUG: Estado del modal:', estado);
+        console.log('DEBUG: Estado del modal:', estado);
     });
     }
     

@@ -1,8 +1,8 @@
+// pages/login/login.component.ts
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -29,9 +29,9 @@ export class LoginComponent {
   ) {}
 
   ngOnInit() {
-    // Si ya está logueado, redirigir a la página principal
+    // ✅ Si ya está logueado, redirigir según el tipo de usuario
     if (this.authService.isLoggedIn()) {
-      this.router.navigate(['/']);
+      this.redirectBasedOnUserType();
     }
   }
 
@@ -39,7 +39,7 @@ export class LoginComponent {
     this.submitted = true;
     this.error = '';
 
-    // Validacion basica
+    // Validación básica
     if (!this.credentials.email || !this.credentials.password) {
       this.error = 'Por favor completa todos los campos';
       return;
@@ -52,8 +52,8 @@ export class LoginComponent {
       next: (success) => {
         this.loading = false;
         if (success) {
-          // Login exitoso - redirigir a la página principal
-          this.router.navigate(['/']);
+          // ✅ La redirección ahora se maneja automáticamente en el AuthService
+          // según el tipo de usuario
         } else {
           this.error = 'Credenciales incorrectas o error de autenticación. Verifica usuario/contraseña.';
         }
@@ -65,7 +65,12 @@ export class LoginComponent {
     });
   }
 
-  
-
-  
+  private redirectBasedOnUserType() {
+    const user = this.authService.getCurrentUser();
+    if (user?.tipo === 'admin') {
+      this.router.navigate(['/dashboard']);
+    } else {
+      this.router.navigate(['/']);
+    }
+  }
 }

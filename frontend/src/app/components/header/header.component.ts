@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService, User } from '../../services/auth.service';
 import { CitaService, CitaResponseDTO } from '../../services/cita.service';
@@ -70,4 +70,18 @@ export class HeaderComponent implements OnInit {
     this.authService.logout();
     this.closeUserSidebar();
   }
+
+  navigateToDashboard() {
+  this.router.navigate(['/dashboard']);
+  this.closeUserSidebar();
+  }
+
+  irALogin() {
+  this.router.navigate(['/login']);
+  }
+
+  isLoginPage(): boolean {
+    return this.router.url === '/login' || this.router.url === '/auth/login';
+  }
+  
 }
