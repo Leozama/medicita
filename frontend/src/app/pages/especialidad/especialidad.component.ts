@@ -20,67 +20,7 @@ interface Medico {
   selector: 'app-especialidad',
   standalone: true,
   imports: [CommonModule, CitaModalComponent], // Agregar CitaModalComponent aquí
-  template: `
-    <!-- Header -->
-    <section class="bg-blue-600 text-white py-12">
-      <div class="container mx-auto px-4">
-        <h1 class="text-4xl font-bold capitalize mb-2">{{ getNombreEspecialidad() }}</h1>
-        <p class="text-xl text-blue-100">
-          {{ medicos.length }} doctor{{ medicos.length !== 1 ? 'es' : '' }} disponible{{ medicos.length !== 1 ? 's' : '' }} en esta especialidad
-        </p>
-      </div>
-    </section>
-
-    <button (click)="volverAServicios()" class="flex items-center text-blue-600 hover:text-gray-600 mt-4 mb-4 transition-colors">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-          </svg>
-          Volver a servicios
-        </button>
-
-    <!-- Lista de Médicos -->
-    <div class="container mx-auto px-4 py-8" *ngIf="medicos.length > 0">
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        <div *ngFor="let medico of medicos" class="bg-white p-6 rounded-lg shadow-lg border border-gray-200">
-          <div class="flex items-start justify-between mb-4">
-            <div class="flex items-center space-x-4">
-              <!-- Foto del médico -->
-              <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                {{ getIniciales(medico.nombre) }}
-              </div>
-              <div>
-                <h3 class="text-xl font-bold text-gray-800">{{ medico.nombre }}</h3>
-                <p class="text-gray-600 capitalize">{{ medico.especialidad }}</p>
-              </div>
-            </div>
-            
-            <!-- Disponibilidad -->
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-              Disponible
-            </span>
-          </div>
-
-          <p class="text-gray-700 mb-4">Experiencia: {{ medico.experiencia }}</p>
-          
-          <!-- Botón Agendar Cita -->
-          <button 
-            (click)="agendarCita(medico)"
-            class="w-full bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-            Agendar Cita
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Mensaje si no hay médicos -->
-    <div *ngIf="medicos.length === 0 && especialidadId" class="container mx-auto px-4 py-8 text-center">
-      <p class="text-red-500 text-xl">No se encontraron médicos para esta especialidad.</p>
-      <p class="text-gray-600">Especialidad: {{ especialidadId }}</p>
-    </div>
-
-    <!-- Modal de Cita -->
-    <app-cita-modal></app-cita-modal>
-  `
+  templateUrl:"/especialidad.component.html"
 })
 export class EspecialidadComponent implements OnInit {
   especialidadId: string = '';
@@ -225,9 +165,9 @@ export class EspecialidadComponent implements OnInit {
 
     // En especialidad.component.ts - modifica el método agendarCita
     agendarCita(medico: Medico) {
-    console.log('🔴 DEBUG: Click en Agendar Cita');
-    console.log('🔴 DEBUG: Médico:', medico);
-    console.log('🔴 DEBUG: Servicio inyectado:', this.citaService);
+    console.log('DEBUG: Click en Agendar Cita');
+    console.log('DEBUG: Médico:', medico);
+    console.log('DEBUG: Servicio inyectado:', this.citaService);
     
     this.citaService.abrirModal(
         medico.id,
