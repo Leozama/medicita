@@ -55,7 +55,7 @@ export class LoginComponent {
           // Login exitoso - redirigir a la página principal
           this.router.navigate(['/']);
         } else {
-          this.error = 'Credenciales incorrectas. Usa las credenciales de demo. demo@user.com / 1234';
+          this.error = 'Credenciales incorrectas o error de autenticación. Verifica usuario/contraseña.';
         }
       },
       error: (error) => {

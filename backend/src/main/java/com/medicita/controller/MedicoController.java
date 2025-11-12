@@ -11,6 +11,7 @@ import java.util.List;
 @RestController
 //http://localhost:8080/api/medicos
 @RequestMapping("api/medicos")
+@CrossOrigin(origins = "http://localhost:4200")
 public class MedicoController {
 
     private final MedicoService medicoService;

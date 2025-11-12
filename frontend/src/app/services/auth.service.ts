@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { map, catchError } from 'rxjs/operators';
 
 export interface User {
   id: number;
@@ -9,42 +11,56 @@ export interface User {
   tipo: 'paciente' | 'admin';
 }
 
+interface LoginResponse {
+  userId?: number;
+  nombreCompleto?: string;
+  rol?: string;
+  mensaje?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  // Change this baseUrl if your backend runs on a different host/port
+  private baseUrl = 'http://localhost:8080/api/auth';
+
   private currentUserSubject = new BehaviorSubject<User | null>(this.getUserFromStorage());
   public currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private http: HttpClient) {}
 
+  /**
+   * Realiza el login llamando al backend POST /api/auth/login
+   * Mapea la respuesta a un User y lo guarda en localStorage.
+   * Devuelve Observable<boolean> indicando éxito o fracaso.
+   */
   login(email: string, password: string): Observable<boolean> {
-    return new Observable(observer => {
-      setTimeout(() => {
-        if (email === 'user@demo.com' && password === '1234') {
+    const payload = { userName: email, password };
+    return this.http.post<LoginResponse>(`${this.baseUrl}/login`, payload).pipe(
+      map(resp => {
+        if (resp && resp.userId) {
           const user: User = {
-            id: 1,
-            email: email,
-            nombre: 'Juan Pérez',
-            tipo: 'paciente'
+            id: resp.userId,
+            email,
+            nombre: resp.nombreCompleto || email,
+            tipo: resp.rol === 'ADMIN' ? 'admin' : 'paciente'
           };
           this.setUser(user);
-          observer.next(true);
-        } else if (email === 'admin@demo.com' && password === '1234') {
-          const user: User = {
-            id: 2,
-            email: email,
-            nombre: 'Administrador',
-            tipo: 'admin'
-          };
-          this.setUser(user);
-          observer.next(true);
-        } else {
-          observer.next(false);
+          return true;
         }
-        observer.complete();
-      }, 1000);
-    });
+        return false;
+      }),
+      catchError(err => {
+        // Si el backend responde 401 significa credenciales inválidas -> login fallido esperado
+        if (err && err.status === 401) {
+          return of(false);
+        }
+        // Para otros errores (network, 500, etc.) sí los dejamos en la consola para depurar
+        console.error('AuthService login error', err);
+        return of(false);
+      })
+    );
   }
 
   logout(): void {
