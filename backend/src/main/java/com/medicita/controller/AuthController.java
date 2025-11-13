@@ -2,6 +2,9 @@ package com.medicita.controller;
 
 import com.medicita.entity.Paciente;
 import com.medicita.service.AuthService;
+import com.medicita.service.PacienteService;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -10,9 +13,11 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final PacienteService pacienteService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, PacienteService pacienteService) {
         this.authService = authService;
+        this.pacienteService = pacienteService;
     }
 
     @PostMapping("/login")
@@ -73,5 +78,85 @@ public class AuthController {
         public String getNombreCompleto() { return nombreCompleto; }
         public String getRol() { return rol; }
         public String getMensaje() { return mensaje; }
+    }
+
+    // Registro request/response
+    public static class RegistroRequest {
+        private String nombreCompleto;
+        private String email;
+        private String telefono;
+        private String fechaNacimiento;
+        private String password;
+        private String username;
+
+        public String getNombreCompleto() { return nombreCompleto; }
+        public void setNombreCompleto(String nombreCompleto) { this.nombreCompleto = nombreCompleto; }
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
+        public String getTelefono() { return telefono; }
+        public void setTelefono(String telefono) { this.telefono = telefono; }
+        public String getFechaNacimiento() { return fechaNacimiento; }
+        public void setFechaNacimiento(String fechaNacimiento) { this.fechaNacimiento = fechaNacimiento; }
+        public String getPassword() { return password; }
+        public void setPassword(String password) { this.password = password; }
+        public String getUsername() { return username; }
+        public void setUsername(String username) { this.username = username; }
+    }
+
+    public static class RegistroResponse {
+        private Integer userId;
+        private String mensaje;
+
+        public RegistroResponse(Integer userId, String mensaje) {
+            this.userId = userId;
+            this.mensaje = mensaje;
+        }
+
+        public Integer getUserId() { return userId; }
+        public String getMensaje() { return mensaje; }
+    }
+
+    @PostMapping("/registro")
+    public RegistroResponse registro(@RequestBody RegistroRequest request) {
+        // Validaciones básicas
+        if (request.getUsername() == null || request.getUsername().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "username es requerido");
+        }
+        // Verificar existencia por username
+        if (pacienteService != null) {
+            try {
+                // pacienteService uses repository which provides findByUserName
+                // If user exists, return 409
+                java.util.Optional<com.medicita.entity.Paciente> existing = pacienteService.findAll().stream()
+                        .filter(p -> request.getUsername().equals(p.getUserName()))
+                        .findFirst();
+                if (existing.isPresent()) {
+                    throw new ResponseStatusException(HttpStatus.CONFLICT, "Usuario ya existente");
+                }
+            } catch (Exception e) {
+                // ignore, will handle save below
+            }
+        }
+
+        // Separar nombre completo en firstName/secondName si viene
+        String firstName = "";
+        String secondName = "";
+        if (request.getNombreCompleto() != null && !request.getNombreCompleto().isBlank()) {
+            String[] parts = request.getNombreCompleto().trim().split("\\s+", 2);
+            firstName = parts[0];
+            if (parts.length > 1) secondName = parts[1];
+        }
+
+        Paciente paciente = new Paciente();
+        paciente.setFirstName(firstName);
+        paciente.setSecondName(secondName);
+        paciente.setEmail(request.getEmail());
+        paciente.setTelefono(request.getTelefono());
+        paciente.setFechaNacimiento(request.getFechaNacimiento());
+        paciente.setUserName(request.getUsername());
+        paciente.setPassword(request.getPassword());
+
+        Paciente saved = pacienteService.save(paciente);
+        return new RegistroResponse(saved.getId(), "Registro exitoso");
     }
 }
