@@ -1,146 +1,139 @@
 // pages/pagos/pagos.component.ts
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 interface Pago {
-  id: number;
+  pagoId?: number;
   paciente: string;
-  email: string;
-  telefono: string;
-  medico: string;
-  especialidad: string;
-  fecha: string;
-  referencia: string;
-  fechaCita: string;
-  horaCita: string;
-  monto: number;
+  email?: string;
+  telefono?: string;
+  medico?: string;
+  especialidad?: string;
+  fecha: string; // fecha del registro/creación o fechaCita
+  referencia?: string;
+  fechaCita?: string;
+  horaCita?: string;
+  monto?: number;
   estado: 'Completado' | 'Pendiente' | 'Fallido';
-  metodoPago: string;
-  idTransaccion: string;
+}
+
+// DTO que responde el backend
+interface PagoResponseDTO {
+  pagoId: number;
+  citaId: number;
+  pacienteId: number;
+  nombrePaciente: string;
+  nombreMedico: string;
+  especialidad: string;
+  fechaCita: string;
+  monto: number;
+  estado: string; // PENDIENTE | PAGADO | CANCELADO
 }
 
 @Component({
   selector: 'app-pagos',
   standalone: true,
-  imports: [CommonModule],
-  templateUrl: './pagos.component.html'
+  imports: [CommonModule, HttpClientModule],
+  templateUrl: './pagos.component.html',
 })
-export class PagosComponent {
-  constructor(private router: Router) {}
+export class PagosComponent implements OnInit {
+  private baseUrl = 'http://localhost:8080/api/pagos';
+
+  pagos: Pago[] = [];
+
+  constructor(private router: Router, private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.loadPagos();
+  }
 
   volverADashboard(): void {
     this.router.navigate(['/dashboard']);
   }
 
-  pagos: Pago[] = [
-    {
-      id: 1,
-      paciente: 'Juan Pérez',
-      email: 'juan@email.com',
-      telefono: '+1234567890',
-      medico: 'Dr. Carlos Mendoza',
-      especialidad: 'Cardiología',
-      fecha: '2024-01-15',
-      referencia: 'REF-001-2024',
-      fechaCita: '2024-01-20',
-      horaCita: '10:00 AM',
-      monto: 150,
-      estado: 'Completado',
-      metodoPago: 'Tarjeta de Crédito',
-      idTransaccion: 'TXN-001-2024'
-    },
-    {
-      id: 2,
-      paciente: 'María García',
-      email: 'maria@email.com',
-      telefono: '+1234567891',
-      medico: 'Dra. Laura Martínez',
-      especialidad: 'Neurología',
-      fecha: '2024-01-16',
-      referencia: 'REF-002-2024',
-      fechaCita: '2024-01-22',
-      horaCita: '11:00 AM',
-      monto: 180,
-      estado: 'Completado',
-      metodoPago: 'PayPal',
-      idTransaccion: 'TXN-002-2024'
-    },
-    {
-      id: 3,
-      paciente: 'Carlos López',
-      email: 'carlos@email.com',
-      telefono: '+1234567892',
-      medico: 'Dr. Antonio García',
-      especialidad: 'Traumatología',
-      fecha: '2024-01-17',
-      referencia: 'REF-003-2024',
-      fechaCita: '2024-01-25',
-      horaCita: '09:00 AM',
-      monto: 200,
-      estado: 'Pendiente',
-      metodoPago: 'Transferencia',
-      idTransaccion: 'TXN-003-2024'
-    },
-    {
-      id: 4,
-      paciente: 'Ana Rodríguez',
-      email: 'ana@email.com',
-      telefono: '+1234567893',
-      medico: 'Dra. Isabel Rodríguez',
-      especialidad: 'Traumatología',
-      fecha: '2024-01-18',
-      referencia: 'REF-004-2024',
-      fechaCita: '2024-01-28',
-      horaCita: '02:00 PM',
-      monto: 200,
-      estado: 'Fallido',
-      metodoPago: 'Tarjeta de Débito',
-      idTransaccion: 'TXN-004-2024'
-    },
-    {
-      id: 5,
-      paciente: 'Pedro Sánchez',
-      email: 'pedro@email.com',
-      telefono: '+1234567894',
-      medico: 'Dr. Roberto Fernández',
-      especialidad: 'Neurología',
-      fecha: '2024-01-19',
-      referencia: 'REF-005-2024',
-      fechaCita: '2024-01-30',
-      horaCita: '03:00 PM',
-      monto: 180,
-      estado: 'Pendiente',
-      metodoPago: 'Efectivo',
-      idTransaccion: 'TXN-005-2024'
-    }
-  ];
+  private mapDtoToPago(dto: PagoResponseDTO): Pago {
+    // Mapear estado del backend a etiquetas UI
+    const estadoMap: Record<string, Pago['estado']> = {
+      PAGADO: 'Completado',
+      PENDIENTE: 'Pendiente',
+      CANCELADO: 'Fallido',
+    };
+
+    return {
+      pagoId: dto.pagoId,
+      paciente: dto.nombrePaciente || 'N/A',
+      email: undefined,
+      telefono: undefined,
+      medico: dto.nombreMedico,
+      especialidad: dto.especialidad,
+      fecha: dto.fechaCita,
+      referencia: `PAGO-${dto.pagoId}`,
+      fechaCita: dto.fechaCita,
+      horaCita: undefined,
+      monto: dto.monto,
+      estado: estadoMap[dto.estado] || 'Pendiente',
+    };
+  }
+
+  loadPagos() {
+    this.http.get<PagoResponseDTO[]>(this.baseUrl).subscribe({
+      next: (list) => {
+        this.pagos = list.map((dto) => this.mapDtoToPago(dto));
+      },
+      error: (err) => {
+        console.error('Error cargando pagos desde backend:', err);
+        this.pagos = [];
+      },
+    });
+  }
 
   cambiarEstadoPago(pago: Pago, event: any): void {
-    const nuevoEstado = event.target.value as 'Completado' | 'Pendiente' | 'Fallido';
-    pago.estado = nuevoEstado;
-    
-    // Aquí puedes agregar lógica adicional como guardar en una base de datos
-    console.log(`Estado del pago ${pago.referencia} cambiado a: ${nuevoEstado}`);
-    
-    // Opcional: Mostrar mensaje de confirmación
-    alert(`Estado del pago ${pago.referencia} actualizado a: ${nuevoEstado}`);
+    const nuevoEstadoUI = event.target.value as 'Completado' | 'Pendiente' | 'Fallido';
+
+    // Mapear a estado backend
+    const backendMap: Record<string, string> = {
+      Completado: 'PAGADO',
+      Pendiente: 'PENDIENTE',
+      Fallido: 'CANCELADO',
+    };
+
+    const estadoBackend = backendMap[nuevoEstadoUI];
+    if (!pago.pagoId) {
+      alert('Pago sin id, no se puede actualizar en backend');
+      return;
+    }
+
+    this.http
+      .put<any>(`${this.baseUrl}/${pago.pagoId}/estado`, { estado: estadoBackend })
+      .subscribe({
+        next: (resp) => {
+          pago.estado = nuevoEstadoUI;
+          alert(`Estado del pago ${pago.referencia} actualizado a: ${nuevoEstadoUI}`);
+        },
+        error: (err) => {
+          console.error('Error actualizando estado de pago en backend:', err);
+          const msg = err?.error?.message || err?.message || 'Error actualizando estado';
+          alert(`Error actualizando estado: ${msg}`);
+        },
+      });
   }
 
   getIniciales(nombreCompleto: string): string {
     return nombreCompleto
       .split(' ')
       .filter((_, index) => index === 0 || index === 1)
-      .map(nombre => nombre[0])
+      .map((nombre) => nombre[0])
       .join('')
       .toUpperCase();
   }
 
   getEstadoClass(estado: string): string {
     const clases = {
-      'Completado': 'bg-green-100 text-green-800 border-green-300',
-      'Pendiente': 'bg-yellow-100 text-yellow-800 border-yellow-300',
-      'Fallido': 'bg-red-100 text-red-800 border-red-300'
+      Completado: 'bg-green-100 text-green-800 border-green-300',
+      Pendiente: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+      Fallido: 'bg-red-100 text-red-800 border-red-300',
     };
     return clases[estado as keyof typeof clases] || 'bg-gray-100 text-gray-800 border-gray-300';
   }

@@ -4,6 +4,8 @@ import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService, User } from '../../services/auth.service';
+import { HttpClient } from '@angular/common/http';
+import { CitaService, CitaResponseDTO } from '../../services/cita.service';
 
 interface Cita {
   id: number;
@@ -15,10 +17,7 @@ interface Cita {
   monto?: number;
 }
 
-interface DatosPago {
-  fechaPago: string;
-  referencia: string;
-}
+// ya no se usa interfaz de datos del modal de pago
 
 @Component({
   selector: 'app-header',
@@ -30,45 +29,45 @@ export class HeaderComponent implements OnInit {
   showUserSidebar = false;
   currentUser: User | null = null;
   isLoggedIn = false;
-  mostrarModalPago = false;
-  citaSeleccionada: Cita | null = null;
-  
-  datosPago: DatosPago = {
-    fechaPago: '',
-    referencia: ''
-  };
+  // Ya no usamos modal; solo botón de pagar que llama al backend
 
-  // Datos de ejemplo para citas
-  citas: Cita[] = [
-    {
-      id: 1,
-      nombreMedico: 'Dr. Carlos Mendoza',
-      especialidad: 'Cardiología',
-      fecha: '2024-01-20',
-      horaAgendada: '10:00 AM',
-      estado: 'PENDIENTE_PAGO',
-      monto: 150
-    },
-    {
-      id: 2,
-      nombreMedico: 'Dra. Laura Martínez',
-      especialidad: 'Neurología',
-      fecha: '2024-01-25',
-      horaAgendada: '11:00 AM',
-      estado: 'ACTIVA',
-      monto: 180
-    }
-  ];
+  // Lista de citas cargada desde backend
+  citas: Cita[] = [];
+
+  private pagosBase = 'http://localhost:8080/api/pagos';
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private http: HttpClient,
+    private citaService: CitaService
   ) {}
 
   ngOnInit() {
-    this.authService.currentUser$.subscribe(user => {
+    this.authService.currentUser$.subscribe((user) => {
       this.currentUser = user;
       this.isLoggedIn = !!user;
+
+      // Si es paciente, pedir al servicio que refresque las citas desde backend
+      if (user && user.tipo === 'paciente') {
+        // refresh hará la petición al backend y emitirá en citasPaciente$
+        this.citaService.refreshCitasPaciente(user.id);
+        this.citaService.citasPaciente$.subscribe((list: CitaResponseDTO[]) => {
+          // Mapear la respuesta del backend al tipo local `Cita`
+          this.citas = list.map((l: CitaResponseDTO) => ({
+            id: l.id,
+            nombreMedico: l.nombreMedico,
+            especialidad: l.especialidad,
+            fecha: l.fecha,
+            horaAgendada: l.horaAgendada,
+            estado: l.estado || 'ACTIVA',
+            monto: (l as any).monto || undefined,
+          }));
+        });
+      } else {
+        // No es paciente: no mostrar citas
+        this.citas = [];
+      }
     });
   }
 
@@ -77,7 +76,7 @@ export class HeaderComponent implements OnInit {
       return this.currentUser.nombre
         .split(' ')
         .filter((_, index) => index === 0 || index === 1)
-        .map(nombre => nombre[0])
+        .map((nombre) => nombre[0])
         .join('')
         .toUpperCase();
     }
@@ -90,9 +89,6 @@ export class HeaderComponent implements OnInit {
 
   closeUserSidebar() {
     this.showUserSidebar = false;
-    this.mostrarModalPago = false;
-    this.citaSeleccionada = null;
-    this.resetFormPago();
   }
 
   logout() {
@@ -113,45 +109,32 @@ export class HeaderComponent implements OnInit {
     return this.router.url === '/login';
   }
 
-  // Métodos para el modal de pago
-  abrirModalPago(cita: Cita) {
-    this.citaSeleccionada = cita;
-    this.mostrarModalPago = true;
-    // Establecer fecha actual por defecto
-    this.datosPago.fechaPago = new Date().toISOString().split('T')[0];
-  }
+  pagar(cita: Cita) {
+    if (!cita || !cita.id) return;
 
-  cerrarModalPago() {
-    this.mostrarModalPago = false;
-    this.citaSeleccionada = null;
-    this.resetFormPago();
-  }
-
-  procesarPago() {
-    if (this.citaSeleccionada && this.datosPago.fechaPago && this.datosPago.referencia) {
-      // Aquí iría la lógica para procesar el pago con el backend
-      console.log('Procesando pago:', {
-        cita: this.citaSeleccionada,
-        datosPago: this.datosPago
-      });
-
-      // Simular procesamiento exitoso
-      alert(`✅ Pago registrado exitosamente\nReferencia: ${this.datosPago.referencia}\nMonto: $${this.citaSeleccionada.monto || '150'}`);
-      
-      // Actualizar estado de la cita
-      const citaIndex = this.citas.findIndex(c => c.id === this.citaSeleccionada!.id);
-      if (citaIndex !== -1) {
-        this.citas[citaIndex].estado = 'PAGADA';
-      }
-
-      this.cerrarModalPago();
-      this.closeUserSidebar();
-    }
+    // Crear el pago directamente en estado PAGADO (backend usará fecha y monto de la cita)
+    const request = { citaId: cita.id, estado: 'PAGADO' };
+    this.http.post<any>(this.pagosBase, request).subscribe({
+      next: (created) => {
+        // Actualizar estado de la cita localmente
+        const idx = this.citas.findIndex((c) => c.id === cita.id);
+        if (idx !== -1) {
+          this.citas[idx].estado = 'PAGADA';
+        }
+        alert('✅ Pago registrado y marcado como PAGADO');
+        this.closeUserSidebar();
+      },
+      error: (err) => {
+        console.error('Error creando pago en backend:', err);
+        const msg = err?.error?.message || err?.message || 'No se pudo procesar el pago.';
+        alert(`Error creando pago: ${msg}`);
+      },
+    });
   }
 
   cancelCita(citaId: number) {
     if (confirm('¿Estás seguro de que deseas cancelar esta cita?')) {
-      const citaIndex = this.citas.findIndex(c => c.id === citaId);
+      const citaIndex = this.citas.findIndex((c) => c.id === citaId);
       if (citaIndex !== -1) {
         this.citas[citaIndex].estado = 'CANCELADA';
         alert('✅ Cita cancelada exitosamente');
@@ -159,10 +142,5 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  private resetFormPago() {
-    this.datosPago = {
-      fechaPago: '',
-      referencia: ''
-    };
-  }
+  // ya no hay formulario de pago
 }

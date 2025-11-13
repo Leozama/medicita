@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @Transactional
@@ -28,25 +30,38 @@ public class PagoServiceImplementation implements PagoService {
     public PagoResponseDTO generarPagoPendiente(PagoRequestDTO pagoRequestDTO) {
         // Validar que el ID de cita no sea nulo
         if (pagoRequestDTO.getCitaId() == null) {
-            throw new RuntimeException("ID de cita es requerido");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ID de cita es requerido");
         }
 
         // Buscar la cita con médico y paciente
         Cita cita = citaRepository.findByIdWithMedicoAndPaciente(pagoRequestDTO.getCitaId())
-                .orElseThrow(() -> new RuntimeException("Cita no encontrada con ID: " + pagoRequestDTO.getCitaId()));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada con ID: " + pagoRequestDTO.getCitaId()));
 
-        // Validar que el médico tenga costo de consulta configurado
-        if (cita.getMedico().getCostoConsulta() == null) {
-            throw new RuntimeException("El médico no tiene configurado el costo de consulta");
+        // Obtener costo de consulta; si no está configurado, usar valor por defecto
+        Double costo = cita.getMedico().getCostoConsulta();
+        if (costo == null) {
+            // Usar monto por defecto para consultas si no está configurado
+            costo = 150.0;
         }
 
-        // Crear el pago pendiente
+        // Crear el pago (estado por defecto PENDIENTE, pero el request puede pedir PAGADO)
         Pago pago = new Pago();
         pago.setCita(cita);
         pago.setPaciente(cita.getPaciente());
         pago.setFechaCita(cita.getFecha());
-        pago.setMonto(cita.getMedico().getCostoConsulta());
-        pago.setEstado("PENDIENTE");
+        pago.setMonto(costo);
+
+        String requestedEstado = pagoRequestDTO.getEstado();
+        if (requestedEstado == null) {
+            pago.setEstado("PENDIENTE");
+        } else {
+            // Normalizar y validar
+            String est = requestedEstado.toUpperCase();
+            if (!est.equals("PENDIENTE") && !est.equals("PAGADO") && !est.equals("CANCELADO")) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Estado inválido al crear pago. Debe ser: PENDIENTE, PAGADO o CANCELADO");
+            }
+            pago.setEstado(est);
+        }
 
         Pago pagoGuardado = pagoRepository.save(pago);
 
@@ -82,11 +97,11 @@ public class PagoServiceImplementation implements PagoService {
     @Override
     public PagoResponseDTO actualizarEstadoPago(Integer pagoId, String nuevoEstado) {
         Pago pago = pagoRepository.findByIdWithDetails(pagoId)
-                .orElseThrow(() -> new RuntimeException("Pago no encontrado con ID: " + pagoId));
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pago no encontrado con ID: " + pagoId));
 
         // Validar que el estado sea válido
         if (!nuevoEstado.equals("PENDIENTE") && !nuevoEstado.equals("PAGADO") && !nuevoEstado.equals("CANCELADO")) {
-            throw new RuntimeException("Estado inválido. Debe ser: PENDIENTE, PAGADO o CANCELADO");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Estado inválido. Debe ser: PENDIENTE, PAGADO o CANCELADO");
         }
 
         pago.setEstado(nuevoEstado);
