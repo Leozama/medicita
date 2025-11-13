@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService, User } from '../../services/auth.service';
+import { MedicoService } from '../../services/medico.service';
 
 interface Medico {
   id: number;
@@ -16,8 +17,8 @@ interface Medico {
 
 interface NuevoMedico {
   nombre: string;
+  apellido: string;
   especialidad: string;
-  experiencia: string;
   disponible: boolean;
   horaInicio: string;
   horaFin: string;
@@ -27,99 +28,75 @@ interface NuevoMedico {
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './dashboard.component.html'
+  templateUrl: './dashboard.component.html',
 })
 export class DashboardComponent implements OnInit {
   currentUser: User | null = null;
   medicoSeleccionado: Medico | null = null;
   mostrarModalAgregar = false;
-  
+
   nuevoMedico: NuevoMedico = {
     nombre: '',
+    apellido: '',
     especialidad: '',
-    experiencia: '',
     disponible: true,
     horaInicio: '',
-    horaFin: ''
+    horaFin: '',
   };
 
   horasDisponibles: string[] = [
-    '07:00', '08:00', '09:00', '10:00', '11:00', 
-    '12:00', '13:00', '14:00', '15:00', '16:00', 
-    '17:00', '18:00'
+    '07:00',
+    '08:00',
+    '09:00',
+    '10:00',
+    '11:00',
+    '12:00',
+    '13:00',
+    '14:00',
+    '15:00',
+    '16:00',
+    '17:00',
+    '18:00',
   ];
 
-  medicos: Medico[] = [
-    {
-      id: 1,
-      nombre: 'Dr. Carlos Mendoza',
-      especialidad: 'Cardiología',
-      experiencia: '15 años',
-      disponible: true,
-      horario: '08:00 - 16:00'
-    },
-    {
-      id: 2,
-      nombre: 'Dra. Laura Martínez',
-      especialidad: 'Neurología',
-      experiencia: '10 años',
-      disponible: true,
-      horario: '09:00 - 17:00'
-    },
-    {
-      id: 3,
-      nombre: 'Dra. María Santos',
-      especialidad: 'Cardiología',
-      experiencia: '12 años',
-      disponible: true,
-      horario: '08:00 - 15:00'
-    },
-    {
-      id: 4,
-      nombre: 'Dr. Antonio García',
-      especialidad: 'Traumatología',
-      experiencia: '20 años',
-      disponible: true,
-      horario: '10:00 - 18:00'
-    },
-    {
-      id: 5,
-      nombre: 'Dr. Roberto Fernández',
-      especialidad: 'Neurología',
-      experiencia: '18 años',
-      disponible: true,
-      horario: '07:00 - 14:00'
-    },
-    {
-      id: 6,
-      nombre: 'Dra. Isabel Rodríguez',
-      especialidad: 'Traumatología',
-      experiencia: '14 años',
-      disponible: true,
-      horario: '08:30 - 16:30'
-    },
-    {
-      id: 7,
-      nombre: 'Dr. Fernando Ramírez',
-      especialidad: 'Endocrinología',
-      experiencia: '19 años',
-      disponible: true,
-      horario: '09:00 - 17:00'
-    }
-  ];
+  medicos: Medico[] = [];
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private medicoService: MedicoService
   ) {}
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
-    
+
     if (!this.currentUser || this.currentUser.tipo !== 'admin') {
       this.router.navigate(['/login']);
       return;
     }
+    // Cargar médicos desde el backend
+    // Si falla la petición, se mantiene la lista vacía y se muestra un error en consola
+    // MedicoService inyectado para obtener los registros reales
+    // Nota: se asigna directamente la respuesta asumiendo que los campos coinciden.
+    // Si backend usa otras claves, adaptar el mapeo aquí.
+    // Cargar médicos reales desde el backend
+    this.medicoService.findAll().subscribe({
+      next: (list) => {
+        // Normalizamos la respuesta a la forma esperada por el componente
+        this.medicos = list.map((m) => ({
+          id: m.id,
+          nombre: (m.nombre ?? `${m.firstName ?? ''} ${m.secondName ?? ''}`).trim(),
+          especialidad: m.especialidad ?? '',
+          experiencia: m.experiencia ?? '',
+          disponible: m.disponible ?? true,
+          horario: '',
+        }));
+      },
+      error: (err) => {
+        console.error('Error cargando médicos:', err);
+        // Mantener lista vacía o mostrar mensaje al admin según prefieras
+      },
+    });
   }
 
   seleccionarMedico(medico: Medico): void {
@@ -127,32 +104,82 @@ export class DashboardComponent implements OnInit {
   }
 
   eliminarMedicoSeleccionado(): void {
-    if (this.medicoSeleccionado) {
-      if (confirm(`¿Estás seguro de eliminar a ${this.medicoSeleccionado.nombre}?`)) {
-        this.medicos = this.medicos.filter(m => m.id !== this.medicoSeleccionado!.id);
-        this.medicoSeleccionado = null;
-      }
+    if (!this.medicoSeleccionado) return;
+
+    if (!confirm(`¿Estás seguro de eliminar a ${this.medicoSeleccionado.nombre}?`)) return;
+
+    const id = this.medicoSeleccionado.id;
+
+    // Si el id es un id temporal/cliente (por ejemplo 0), eliminamos solo en el cliente
+    if (!id || id <= 0) {
+      this.medicos = this.medicos.filter((m) => m.id !== id);
+      this.medicoSeleccionado = null;
+      alert('Médico eliminado localmente');
+      return;
     }
+
+    // Llamar al backend para eliminar
+    this.medicoService.deleteMedico(id).subscribe({
+      next: (ok) => {
+        if (ok) {
+          this.medicos = this.medicos.filter((m) => m.id !== id);
+          this.medicoSeleccionado = null;
+          alert('Médico eliminado correctamente');
+        } else {
+          alert('No se pudo eliminar el médico. Revisa la consola para más detalles.');
+        }
+      },
+      error: (err) => {
+        console.error('Error eliminando medico:', err);
+        alert('Ocurrió un error eliminando el médico. Revisa la consola.');
+      },
+    });
   }
 
   guardarMedico(): void {
-    if (this.nuevoMedico.nombre && this.nuevoMedico.especialidad && this.nuevoMedico.experiencia && this.nuevoMedico.horaInicio && this.nuevoMedico.horaFin) {
-      const nuevoId = this.medicos.length > 0 ? Math.max(...this.medicos.map(m => m.id)) + 1 : 1;
-      
-      const medico: Medico = {
-        id: nuevoId,
-        nombre: this.nuevoMedico.nombre,
+    if (
+      this.nuevoMedico.nombre &&
+      this.nuevoMedico.especialidad &&
+      this.nuevoMedico.horaInicio &&
+      this.nuevoMedico.horaFin
+    ) {
+      // Preparar payload para backend usando nombre y apellido separados
+      const firstName = this.nuevoMedico.nombre.trim();
+      const secondName = this.nuevoMedico.apellido.trim();
+
+      const payload = {
+        firstName,
+        secondName,
         especialidad: this.nuevoMedico.especialidad,
-        experiencia: `${this.nuevoMedico.experiencia} años`,
-        disponible: this.nuevoMedico.disponible,
-        horario: `${this.nuevoMedico.horaInicio} - ${this.nuevoMedico.horaFin}`
+        horario: `${this.nuevoMedico.horaInicio} - ${this.nuevoMedico.horaFin}`,
+        costoConsulta: null,
       };
 
-      this.medicos.push(medico);
-      this.cerrarModal();
-      
-      // Mostrar mensaje de éxito
-      alert(`Médico ${medico.nombre} agregado exitosamente`);
+      // Llamar al backend para crear el médico
+      this.medicoService.createMedico(payload).subscribe({
+        next: (created) => {
+          // Mapear respuesta del backend al formato usado por el componente
+          const nuevo: Medico = {
+            id: created.id,
+            nombre: `${created.firstName || firstName}${
+              created.secondName ? ' ' + created.secondName : ''
+            }`.trim(),
+            especialidad: created.especialidad || this.nuevoMedico.especialidad,
+            experiencia: '',
+            disponible: this.nuevoMedico.disponible,
+            horario:
+              created.horario || `${this.nuevoMedico.horaInicio} - ${this.nuevoMedico.horaFin}`,
+          };
+
+          this.medicos.push(nuevo);
+          this.cerrarModal();
+          alert(`Médico ${nuevo.nombre} agregado y guardado en la base de datos`);
+        },
+        error: (err) => {
+          console.error('Error creando medico en backend:', err);
+          alert('No se pudo guardar el médico en el servidor. Intenta de nuevo.');
+        },
+      });
     }
   }
 
@@ -160,11 +187,11 @@ export class DashboardComponent implements OnInit {
     if (!this.nuevoMedico.horaInicio || !this.nuevoMedico.horaFin) {
       return false;
     }
-    
+
     // Convertir horas a minutos para comparar
     const inicioMinutos = this.horaAMinutos(this.nuevoMedico.horaInicio);
     const finMinutos = this.horaAMinutos(this.nuevoMedico.horaFin);
-    
+
     return finMinutos > inicioMinutos;
   }
 
@@ -181,11 +208,11 @@ export class DashboardComponent implements OnInit {
   resetForm(): void {
     this.nuevoMedico = {
       nombre: '',
+      apellido: '',
       especialidad: '',
-      experiencia: '',
       disponible: true,
       horaInicio: '',
-      horaFin: ''
+      horaFin: '',
     };
   }
 
@@ -193,7 +220,7 @@ export class DashboardComponent implements OnInit {
     return nombreCompleto
       .split(' ')
       .filter((_, index) => index === 1 || index === 2)
-      .map(nombre => nombre[0])
+      .map((nombre) => nombre[0])
       .join('')
       .toUpperCase();
   }

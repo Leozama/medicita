@@ -9,7 +9,6 @@ import { CitaService, CitaResponseDTO } from '../../services/cita.service';
   standalone: true,
   imports: [RouterLink, CommonModule],
   templateUrl: './header.component.html',
-  
 })
 export class HeaderComponent implements OnInit {
   showUserSidebar = false;
@@ -17,16 +16,20 @@ export class HeaderComponent implements OnInit {
   isLoggedIn = false;
   citas: CitaResponseDTO[] = [];
 
-  constructor(private authService: AuthService, private citaService: CitaService) {}
+  constructor(
+    private authService: AuthService,
+    private citaService: CitaService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
-    this.authService.currentUser$.subscribe(user => {
+    this.authService.currentUser$.subscribe((user) => {
       this.currentUser = user;
       this.isLoggedIn = !!user;
       if (user && user.tipo === 'paciente') {
         // cargar citas del paciente
         this.citaService.refreshCitasPaciente(user.id);
-        this.citaService.citasPaciente$.subscribe(list => this.citas = list || []);
+        this.citaService.citasPaciente$.subscribe((list) => (this.citas = list || []));
       } else {
         this.citas = [];
       }
@@ -37,7 +40,7 @@ export class HeaderComponent implements OnInit {
     if (!this.currentUser) return;
     const ok = confirm('¿Estás seguro que quieres cancelar esta cita?');
     if (!ok) return;
-    this.citaService.deleteCita(citaId, this.currentUser.id).subscribe(success => {
+    this.citaService.deleteCita(citaId, this.currentUser.id).subscribe((success) => {
       if (success) {
         alert('Cita cancelada correctamente');
       } else {
@@ -51,7 +54,7 @@ export class HeaderComponent implements OnInit {
       return this.currentUser.nombre
         .split(' ')
         .filter((_, index) => index === 0 || index === 1)
-        .map(nombre => nombre[0])
+        .map((nombre) => nombre[0])
         .join('')
         .toUpperCase();
     }
@@ -72,16 +75,15 @@ export class HeaderComponent implements OnInit {
   }
 
   navigateToDashboard() {
-  this.router.navigate(['/dashboard']);
-  this.closeUserSidebar();
+    this.router.navigate(['/dashboard']);
+    this.closeUserSidebar();
   }
 
   irALogin() {
-  this.router.navigate(['/login']);
+    this.router.navigate(['/login']);
   }
 
   isLoginPage(): boolean {
     return this.router.url === '/login' || this.router.url === '/auth/login';
   }
-  
 }
