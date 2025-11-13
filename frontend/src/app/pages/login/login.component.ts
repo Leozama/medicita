@@ -52,7 +52,7 @@ export class LoginComponent {
       next: (success) => {
         this.loading = false;
         if (success) {
-          // ✅ La redirección ahora se maneja automáticamente en el AuthService
+          // La redirección ahora se maneja automáticamente en el AuthService
           // según el tipo de usuario
         } else {
           this.error = 'Credenciales incorrectas o error de autenticación. Verifica usuario/contraseña.';
@@ -73,4 +73,10 @@ export class LoginComponent {
       this.router.navigate(['/']);
     }
   }
+
+  irARegistro() {
+  this.router.navigate(['/registro']);
+  }
+
+  
 }

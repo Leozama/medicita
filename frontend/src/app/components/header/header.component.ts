@@ -17,7 +17,7 @@ export class HeaderComponent implements OnInit {
   isLoggedIn = false;
   citas: CitaResponseDTO[] = [];
 
-  constructor(private authService: AuthService, private citaService: CitaService) {}
+  constructor(private authService: AuthService, private citaService: CitaService,private router: Router) {}
 
   ngOnInit() {
     this.authService.currentUser$.subscribe(user => {
@@ -83,5 +83,5 @@ export class HeaderComponent implements OnInit {
   isLoginPage(): boolean {
     return this.router.url === '/login' || this.router.url === '/auth/login';
   }
-  
+
 }

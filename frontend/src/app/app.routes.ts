@@ -7,9 +7,13 @@ import { AuthGuard } from './guards/auth.guard';
 import { DashboardComponent } from './pages/dashboardAdmin/dashboard.component';
 import { AdminGuard } from './guards/admin.guard';
 import { PagosComponent } from './pages/pagos/pagos.component'; // Agregar esta línea
+import { RegistroComponent } from './pages/registro/registro.component'; 
+
+
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: 'registro', component: RegistroComponent },
   { 
     path: '', 
     component: ServiciosComponent,
