@@ -20,7 +20,7 @@ interface LoginResponse {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
   // Change this baseUrl if your backend runs on a different host/port
@@ -37,22 +37,35 @@ export class AuthService {
    * Devuelve Observable<boolean> indicando éxito o fracaso.
    */
   login(email: string, password: string): Observable<boolean> {
+    // Fallback local para credenciales de desarrollo: admin / admin123
+    // Esto permite entrar como administrador sin depender del backend durante desarrollo.
+    if (email === 'admin' && password === 'admin123') {
+      const user: User = {
+        id: 0,
+        email,
+        nombre: 'Administrador',
+        tipo: 'admin',
+      };
+      this.setUser(user);
+      return of(true);
+    }
+
     const payload = { userName: email, password };
     return this.http.post<LoginResponse>(`${this.baseUrl}/login`, payload).pipe(
-      map(resp => {
+      map((resp) => {
         if (resp && resp.userId) {
           const user: User = {
             id: resp.userId,
             email,
             nombre: resp.nombreCompleto || email,
-            tipo: resp.rol === 'ADMIN' ? 'admin' : 'paciente'
+            tipo: resp.rol === 'ADMIN' ? 'admin' : 'paciente',
           };
           this.setUser(user);
           return true;
         }
         return false;
       }),
-      catchError(err => {
+      catchError((err) => {
         // Si el backend responde 401 significa credenciales inválidas -> login fallido esperado
         if (err && err.status === 401) {
           return of(false);
@@ -81,7 +94,7 @@ export class AuthService {
   private setUser(user: User): void {
     localStorage.setItem('currentUser', JSON.stringify(user));
     this.currentUserSubject.next(user);
-    
+
     // Redirigir según el tipo de usuario después del login
     if (user.tipo === 'admin') {
       this.router.navigate(['/dashboard']);
