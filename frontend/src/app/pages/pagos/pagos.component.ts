@@ -69,7 +69,7 @@ export class PagosComponent implements OnInit {
       medico: dto.nombreMedico,
       especialidad: dto.especialidad,
       fecha: dto.fechaCita,
-      referencia: `PAGO-${dto.pagoId}`,
+      referencia: undefined,
       fechaCita: dto.fechaCita,
       horaCita: undefined,
       monto: dto.monto,
@@ -110,7 +110,7 @@ export class PagosComponent implements OnInit {
       .subscribe({
         next: (resp) => {
           pago.estado = nuevoEstadoUI;
-          alert(`Estado del pago ${pago.referencia} actualizado a: ${nuevoEstadoUI}`);
+          alert(`Estado del pago actualizado a: ${nuevoEstadoUI}`);
         },
         error: (err) => {
           console.error('Error actualizando estado de pago en backend:', err);

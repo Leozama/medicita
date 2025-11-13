@@ -79,6 +79,13 @@ public class CitaServiceImplementation implements CitaService {
         cita.setMotivo(citaRequestDTO.getMotivo());
         cita.setFecha(citaRequestDTO.getFecha());
 
+        // Verificar si ya existe una cita activa para el mismo médico, fecha y hora
+        java.util.Optional<Cita> existente = citaRepository.findActiveByMedicoAndFechaAndHora(
+            citaRequestDTO.getMedicoId(), citaRequestDTO.getFecha(), citaRequestDTO.getHoraAgendada());
+        if (existente.isPresent()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una cita para este médico en la misma fecha y hora");
+        }
+
         Cita citaGuardada = citaRepository.save(cita);
 
         // Convertir a DTO y retornar

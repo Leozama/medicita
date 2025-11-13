@@ -60,6 +60,7 @@ export class DashboardComponent implements OnInit {
   ];
 
   medicos: Medico[] = [];
+  horarioInvalido: boolean = false;
 
   constructor(
     private authService: AuthService,
@@ -137,12 +138,28 @@ export class DashboardComponent implements OnInit {
   }
 
   guardarMedico(): void {
+    // Validaciones básicas: campos requeridos
     if (
       this.nuevoMedico.nombre &&
       this.nuevoMedico.especialidad &&
       this.nuevoMedico.horaInicio &&
       this.nuevoMedico.horaFin
     ) {
+      // Validar que nombre y apellido solo contengan letras y espacios
+      const nameRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/;
+      if (!nameRegex.test(this.nuevoMedico.nombre.trim())) {
+        alert('El campo Nombre solo puede contener letras y espacios');
+        return;
+      }
+      if (this.nuevoMedico.apellido && !nameRegex.test(this.nuevoMedico.apellido.trim())) {
+        alert('El campo Apellido solo puede contener letras y espacios');
+        return;
+      }
+      // Validar que el horario sea correcto (horaInicio < horaFin)
+      if (!this.validarHorario()) {
+        alert('La hora de inicio debe ser anterior a la hora de fin');
+        return;
+      }
       // Preparar payload para backend usando nombre y apellido separados
       const firstName = this.nuevoMedico.nombre.trim();
       const secondName = this.nuevoMedico.apellido.trim();
@@ -185,6 +202,7 @@ export class DashboardComponent implements OnInit {
 
   validarHorario(): boolean {
     if (!this.nuevoMedico.horaInicio || !this.nuevoMedico.horaFin) {
+      this.horarioInvalido = false;
       return false;
     }
 
@@ -192,12 +210,39 @@ export class DashboardComponent implements OnInit {
     const inicioMinutos = this.horaAMinutos(this.nuevoMedico.horaInicio);
     const finMinutos = this.horaAMinutos(this.nuevoMedico.horaFin);
 
-    return finMinutos > inicioMinutos;
+    const valid = finMinutos > inicioMinutos;
+    this.horarioInvalido = !valid;
+    return valid;
   }
 
   horaAMinutos(hora: string): number {
     const [horas, minutos] = hora.split(':').map(Number);
     return horas * 60 + minutos;
+  }
+
+  /**
+   * Permite solo letras (incluye acentos y ñ) y espacios al teclear.
+   */
+  allowOnlyLetters(event: KeyboardEvent): void {
+    const key = event.key;
+    const regex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ ]$/;
+    if (!regex.test(key)) {
+      event.preventDefault();
+    }
+  }
+
+  /**
+   * Maneja pegado: filtra caracteres no permitidos y asigna al modelo.
+   */
+  handlePaste(event: ClipboardEvent, field: 'nombre' | 'apellido'): void {
+    event.preventDefault();
+    const clipboard = event.clipboardData?.getData('text') || '';
+    const filtered = clipboard.replace(/[^A-Za-zÁÉÍÓÚáéíóúÑñ ]+/g, '').trim();
+    if (field === 'nombre') {
+      this.nuevoMedico.nombre = filtered;
+    } else {
+      this.nuevoMedico.apellido = filtered;
+    }
   }
 
   cerrarModal(): void {

@@ -65,6 +65,21 @@ public class PagoServiceImplementation implements PagoService {
 
         Pago pagoGuardado = pagoRepository.save(pago);
 
+        // Si el pago se creó como PAGADO o CANCELADO, propagar el estado a la cita relacionada
+        Cita citaRelacionada = pagoGuardado.getCita();
+        if (citaRelacionada != null) {
+            String est = pagoGuardado.getEstado();
+            if ("PAGADO".equals(est)) {
+                citaRelacionada.setEstado("PAGADA");
+            } else if ("CANCELADO".equals(est)) {
+                citaRelacionada.setEstado("CANCELADA");
+            } else {
+                // Mantener ACTIVA para PENDIENTE
+                citaRelacionada.setEstado("ACTIVA");
+            }
+            citaRepository.save(citaRelacionada);
+        }
+
         return convertirPagoAResponseDTO(pagoGuardado);
     }
 
@@ -106,6 +121,19 @@ public class PagoServiceImplementation implements PagoService {
 
         pago.setEstado(nuevoEstado);
         Pago pagoActualizado = pagoRepository.save(pago);
+
+        // Propagar cambio de estado a la cita asociada
+        Cita cita = pagoActualizado.getCita();
+        if (cita != null) {
+            if ("PAGADO".equals(nuevoEstado)) {
+                cita.setEstado("PAGADA");
+            } else if ("CANCELADO".equals(nuevoEstado)) {
+                cita.setEstado("CANCELADA");
+            } else if ("PENDIENTE".equals(nuevoEstado)) {
+                cita.setEstado("ACTIVA");
+            }
+            citaRepository.save(cita);
+        }
 
         return convertirPagoAResponseDTO(pagoActualizado);
     }

@@ -19,4 +19,7 @@ public interface CitaRepository extends JpaRepository<Cita, Integer> {
 
     @Query("SELECT c FROM Cita c JOIN FETCH c.medico WHERE c.paciente.id = :pacienteId")
     List<Cita> findByPacienteIdWithMedico(Integer pacienteId);
+
+    @Query("SELECT c FROM Cita c WHERE c.medico.id = :medicoId AND c.fecha = :fecha AND c.horaAgendada = :hora AND (c.estado IS NULL OR c.estado <> 'CANCELADA')")
+    java.util.Optional<Cita> findActiveByMedicoAndFechaAndHora(Integer medicoId, String fecha, String hora);
 }

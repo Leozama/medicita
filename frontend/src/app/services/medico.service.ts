@@ -20,6 +20,15 @@ export class MedicoService {
   private baseUrl = 'http://localhost:8080/api/medicos';
   constructor(private http: HttpClient) {}
 
+  findById(id: number): Observable<Medico | null> {
+    return this.http.get<Medico>(`${this.baseUrl}/${id}`).pipe(
+      catchError((err) => {
+        console.error('Error obteniendo medico por id', err);
+        return of(null);
+      })
+    );
+  }
+
   findAll(): Observable<Medico[]> {
     return this.http.get<Medico[]>(this.baseUrl);
   }

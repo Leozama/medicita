@@ -1,84 +1,85 @@
 <!-- Overlay -->
-    <div *ngIf="mostrarModal" class="fixed inset-0 bg-black/30  z-50 flex items-center justify-center p-4">
-      <!-- Modal -->
-      <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-        
-        <!-- Header -->
-        <div class="bg-blue-600 text-white p-6 rounded-t-2xl">
-          <h2 class="text-2xl font-bold">Agendar Cita Medica</h2>
-          <p class="text-blue-100 mt-2" *ngIf="citaData">
-            Con {{ citaData.medicoNombre }} - {{ citaData.especialidad }}
+<div
+  *ngIf="mostrarModal"
+  class="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4"
+>
+  <!-- Modal -->
+  <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+    <!-- Header -->
+    <div class="bg-blue-600 text-white p-6 rounded-t-2xl">
+      <h2 class="text-2xl font-bold">Agendar Cita Medica</h2>
+      <p class="text-blue-100 mt-2" *ngIf="citaData">
+        Con {{ citaData.medicoNombre }} - {{ citaData.especialidad }}
+      </p>
+    </div>
+
+    <!-- Formulario -->
+    <div class="p-6" *ngIf="citaData">
+      <form (ngSubmit)="confirmarCita()" #citaForm="ngForm">
+        <!-- Fecha -->
+        <div class="mb-6">
+          <label class="block text-gray-700 font-semibold mb-3"> Fecha de la cita </label>
+          <input
+            type="date"
+            [(ngModel)]="citaData.fecha"
+            name="fecha"
+            required
+            [min]="fechaMinima"
+            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            (change)="onFechaChange()"
+          />
+          <p *ngIf="fechaEsFinDeSemana" class="text-sm text-red-600 mt-2">
+            No se pueden seleccionar lunes ni domingos. Por favor elige un día entre martes y
+            sabado.
           </p>
         </div>
 
-        <!-- Formulario -->
-        <div class="p-6" *ngIf="citaData">
-          <form (ngSubmit)="confirmarCita()" #citaForm="ngForm">
-            
-            <!-- Fecha -->
-            <div class="mb-6">
-              <label class="block text-gray-700 font-semibold mb-3">
-                 Fecha de la cita
-              </label>
-              <input
-                type="date"
-                [(ngModel)]="citaData.fecha"
-                name="fecha"
-                required
-                [min]="fechaMinima"
-                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                (change)="actualizarCosto()">
-            </div>
-
-            <!-- Hora -->
-            <div class="mb-6">
-              <label class="block text-gray-700 font-semibold mb-3">
-                 Hora de la cita
-              </label>
-              <select
-                [(ngModel)]="citaData.hora"
-                name="hora"
-                required
-                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                <option value="">Selecciona una hora</option>
-                <option *ngFor="let hora of horasDisponibles" [value]="hora">
-                  {{ hora }}
-                </option>
-              </select>
-            </div>
-
-            <!-- Costo -->
-            <div class="mb-6 p-4 bg-gray-50 rounded-lg">
-              <label class="block text-gray-700 font-semibold mb-2">
-                Costo de la consulta
-              </label>
-              <div class="flex justify-between items-center">
-                <span class="text-2xl font-bold text-green-600">
-                  {{ getCosto() }}
-                </span>
-                <span class="text-sm text-gray-500">USD</span>
-              </div>
-              <p class="text-sm text-gray-600 mt-2">
-                Incluye consulta médica y diagnóstico inicial
-              </p>
-            </div>
-
-            <!-- Botones -->
-            <div class="flex space-x-4">
-              <button
-                type="button"
-                (click)="cancelar()"
-                class="flex-1 bg-gray-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-600 transition-colors">
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                [disabled]="!citaForm.valid"
-                class="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed">
-                Confirmar Cita
-              </button>
-            </div>
-          </form>
+        <!-- Hora -->
+        <div class="mb-6">
+          <label class="block text-gray-700 font-semibold mb-3"> Hora de la cita </label>
+          <select
+            [(ngModel)]="citaData.hora"
+            name="hora"
+            required
+            class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">Selecciona una hora</option>
+            <option *ngFor="let hora of horasDisponibles" [value]="hora">
+              {{ hora }}
+            </option>
+          </select>
         </div>
-      </div>
+
+        <!-- Costo -->
+        <div class="mb-6 p-4 bg-gray-50 rounded-lg">
+          <label class="block text-gray-700 font-semibold mb-2"> Costo de la consulta </label>
+          <div class="flex justify-between items-center">
+            <span class="text-2xl font-bold text-green-600">
+              {{ getCosto() }}
+            </span>
+            <span class="text-sm text-gray-500">USD</span>
+          </div>
+          <p class="text-sm text-gray-600 mt-2">Incluye consulta médica y diagnóstico inicial</p>
+        </div>
+
+        <!-- Botones -->
+        <div class="flex space-x-4">
+          <button
+            type="button"
+            (click)="cancelar()"
+            class="flex-1 bg-gray-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-gray-600 transition-colors"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            [disabled]="!citaForm.valid"
+            class="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed"
+          >
+            Confirmar Cita
+          </button>
+        </div>
+      </form>
     </div>
+  </div>
+</div>

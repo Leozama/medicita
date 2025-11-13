@@ -112,16 +112,16 @@ export class HeaderComponent implements OnInit {
   pagar(cita: Cita) {
     if (!cita || !cita.id) return;
 
-    // Crear el pago directamente en estado PAGADO (backend usará fecha y monto de la cita)
-    const request = { citaId: cita.id, estado: 'PAGADO' };
+    // Crear el pago directamente en estado PENDIENTE (backend usará fecha y monto de la cita)
+    const request = { citaId: cita.id, estado: 'PENDIENTE' };
     this.http.post<any>(this.pagosBase, request).subscribe({
       next: (created) => {
         // Actualizar estado de la cita localmente
         const idx = this.citas.findIndex((c) => c.id === cita.id);
         if (idx !== -1) {
-          this.citas[idx].estado = 'PAGADA';
+          this.citas[idx].estado = 'PENDIENTE';
         }
-        alert('✅ Pago registrado y marcado como PAGADO');
+        alert('Pago registrado y marcado como PENDIENTE');
         this.closeUserSidebar();
       },
       error: (err) => {

@@ -48,25 +48,6 @@
             ></div>
           </div>
 
-          <!-- Experiencia -->
-          <div class="flex items-center text-gray-600 text-sm">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span>
-              {{
-                medico.experiencia
-                  ? medico.experiencia + ' de experiencia'
-                  : 'Experiencia no especificada'
-              }}
-            </span>
-          </div>
-
           <!-- Horario -->
           <div class="flex items-center text-gray-600 text-sm mt-2">
             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -163,6 +144,10 @@
             [(ngModel)]="nuevoMedico.nombre"
             name="nombre"
             required
+            pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+"
+            title="Solo letras y espacios"
+            (keypress)="allowOnlyLetters($event)"
+            (paste)="handlePaste($event, 'nombre')"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Ej: Juan"
           />
@@ -174,6 +159,10 @@
             [(ngModel)]="nuevoMedico.apellido"
             name="apellido"
             required
+            pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+"
+            title="Solo letras y espacios"
+            (keypress)="allowOnlyLetters($event)"
+            (paste)="handlePaste($event, 'apellido')"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Ej: Pérez García"
           />
@@ -192,14 +181,10 @@
           <option value="">Selecciona una especialidad</option>
           <option value="Cardiología">Cardiología</option>
           <option value="Neurología">Neurología</option>
-          <option value="Traumatología">Traumatología</option>
-          <option value="Endocrinología">Endocrinología</option>
           <option value="Pediatría">Pediatría</option>
           <option value="Odontología">Odontología</option>
           <option value="Oftalmología">Oftalmología</option>
           <option value="Ortopedia">Ortopedia</option>
-          <option value="Dermatología">Dermatología</option>
-          <option value="Medicina General">Medicina General</option>
         </select>
       </div>
 
@@ -218,6 +203,7 @@
               [(ngModel)]="nuevoMedico.horaInicio"
               name="horaInicio"
               required
+              (change)="validarHorario()"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">Selecciona</option>
@@ -234,6 +220,7 @@
               [(ngModel)]="nuevoMedico.horaFin"
               name="horaFin"
               required
+              (change)="validarHorario()"
               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">Selecciona</option>
@@ -245,6 +232,9 @@
         </div>
         <p class="text-xs text-gray-500 mt-1">
           Los médicos atienden de Lunes a Viernes en el horario seleccionado
+        </p>
+        <p *ngIf="horarioInvalido" class="text-xs text-red-600 mt-1">
+          La hora de inicio debe ser anterior a la hora de fin.
         </p>
       </div>
 
