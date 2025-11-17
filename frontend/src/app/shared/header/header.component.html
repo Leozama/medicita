@@ -1,0 +1,96 @@
+<header class="bg-white shadow-sm border-gray-300" *ngIf="!isLoginPage()">
+  <nav class="container mx-auto px-4 py-4">
+    <div class="flex justify-between items-center">
+      <!-- Lado Izquierdo: Avatar + Logo -->
+      <div class="flex items-center space-x-4">
+        <!-- Avatar del Usuario (solo si está logueado) -->
+        <div class="relative" *ngIf="isLoggedIn; else noLogueado">
+          <button
+            (click)="openUserSidebar()"
+            class="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          >
+            <div
+              class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold"
+            >
+              {{ getIniciales() }}
+            </div>
+            <span class="hidden md:block text-gray-700 font-medium">{{ currentUser?.nombre }}</span>
+            <svg
+              class="w-4 h-4 text-gray-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <ng-template #noLogueado>
+          <!-- Solo mostrar logo cuando no está logueado -->
+          <div class="flex items-center space-x-2 cursor-pointer" (click)="irALogin()">
+            <div class="w-10 h-10 bg-blue-600 rounded-full"></div>
+            <span class="text-xl font-bold text-gray-800">CentroMédico</span>
+          </div>
+        </ng-template>
+
+        <!-- Separador visual (solo si está logueado) -->
+        <div *ngIf="isLoggedIn" class="h-6 w-px bg-gray-300 hidden md:block"></div>
+
+        <!-- Logo (solo si está logueado) -->
+        <div
+          *ngIf="isLoggedIn"
+          class="flex items-center space-x-2 cursor-pointer"
+          (click)="navigateToDashboard()"
+        >
+          <div class="w-10 h-10 bg-blue-600 rounded-full"></div>
+          <span class="text-xl font-bold text-gray-800">CentroMédico</span>
+        </div>
+      </div>
+
+      <!-- Lado Derecho: Botones -->
+      <div class="flex items-center space-x-4">
+        <!-- Botón de Pagos (solo para admin logueado) -->
+        <button
+          *ngIf="currentUser?.tipo === 'admin'"
+          routerLink="/pagos"
+          class="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+            />
+          </svg>
+          <span class="hidden md:block">Pagos</span>
+        </button>
+
+        <!-- Cerrar Sesión (solo si está logueado) -->
+        <button
+          *ngIf="isLoggedIn"
+          (click)="logout()"
+          class="hidden md:block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Cerrar Sesión
+        </button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<!-- Barra Lateral del Usuario (solo si está logueado) -->
+<app-user-sidebar
+  [isOpen]="showUserSidebar"
+  [currentUser]="currentUser"
+  [citas]="citas"
+  (closeSidebar)="closeUserSidebar()"
+  (pagarCita)="pagar($event)"
+  (cancelarCita)="cancelCita($event)">
+</app-user-sidebar>

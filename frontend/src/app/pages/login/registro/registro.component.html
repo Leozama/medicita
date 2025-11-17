@@ -1,3 +1,4 @@
+<!-- pages/registro/registro.component.html -->
 <div
   class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8"
 >
@@ -208,36 +209,8 @@
   </div>
 </div>
 
-<!-- Popup de Registro Exitoso -->
-<div
-  *ngIf="mostrarPopupExito"
-  class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
->
-  <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center">
-    <!-- Icono de éxito -->
-    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-      <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M5 13l4 4L19 7"
-        ></path>
-      </svg>
-    </div>
-
-    <!-- Mensaje -->
-    <h3 class="text-xl font-bold text-gray-900 mb-2">¡Registro Exitoso!</h3>
-    <p class="text-gray-600 mb-6">
-      Tu cuenta ha sido creada correctamente. Ahora puedes iniciar sesión con tus credenciales.
-    </p>
-
-    <!-- Botón OK -->
-    <button
-      (click)="cerrarPopupYRedirigir()"
-      class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-    >
-      OK
-    </button>
-  </div>
-</div>
+<!-- Popup de Registro Exitoso (ahora componente separado) -->
+<app-registro-exitoso-modal
+  [mostrarModal]="mostrarPopupExito"
+  (cerrarModal)="onCerrarPopup()">
+</app-registro-exitoso-modal>

@@ -2,7 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CitaService, CitaData } from '../../services/cita.service';
+import { CitaService, CitaData } from '../../../core/services/cita.service';
 
 @Component({
   selector: 'app-cita-modal',
@@ -106,7 +106,7 @@ export class CitaModalComponent implements OnInit {
               `✅ Cita agendada correctamente para ${this.citaData?.fecha} a las ${this.citaData?.hora}`
             );
           } else {
-            alert('❌ No se pudo agendar la cita. Verifica tu conexión o inicia sesión.');
+            alert(' No se pudo agendar la cita. Verifica tu conexión o inicia sesión.');
           }
         },
         error: (err) => {

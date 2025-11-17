@@ -2,17 +2,17 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { CitaService } from '../../services/cita.service';
-import { CitaModalComponent } from '../../components/cita-modal/cita-modal.component';
-import { MedicoService, Medico } from '../../services/medico.service';
+import { CitaService } from '../../../core/services/cita.service';
+import { CitaModalComponent } from '../../modals/agendar-cita-modal/cita-modal.component';
+import { MedicoService, Medico } from '../../../core/services/medico.service';
 
 @Component({
-  selector: 'app-especialidad',
+  selector: 'app-medicos',
   standalone: true,
-  imports: [CommonModule, CitaModalComponent], // Agregar CitaModalComponent aquí
-    templateUrl: "./especialidad.component.html"
+  imports: [CommonModule, CitaModalComponent], 
+    templateUrl: "medicos.component.html"
 })
-export class EspecialidadComponent implements OnInit {
+export class MedicosComponent implements OnInit {
   especialidadId: string = '';
   medicos: Medico[] = [];
   currentUrl: string = '';
@@ -30,7 +30,7 @@ export class EspecialidadComponent implements OnInit {
     
     this.route.paramMap.subscribe(params => {
       this.especialidadId = params.get('id') || '';
-      console.log('Especialidad ID:', this.especialidadId);
+      console.log('medico ID:', this.especialidadId);
       this.cargarMedicos();
     });
   }
@@ -53,7 +53,7 @@ export class EspecialidadComponent implements OnInit {
     });
   }
 
-    // En especialidad.component.ts - modifica el método agendarCita
+    // En medicos.component.ts - modifica el método agendarCita
     agendarCita(medico: Medico) {
     console.log('DEBUG: Click en Agendar Cita');
     console.log('DEBUG: Médico:', medico);
@@ -93,7 +93,7 @@ export class EspecialidadComponent implements OnInit {
       .toUpperCase();
   }
 
-  volverAServicios() {
-    this.router.navigate(['/servicios']);
+  volverAEspecialidades() {
+    this.router.navigate(['/especialidades']);
   }
 }

@@ -10,6 +10,9 @@ export interface User {
   email: string;
   nombre: string;
   tipo: 'paciente' | 'admin';
+  telefono?: string;
+  username?: string;
+  fechaNacimiento?: string;
 }
 
 interface LoginResponse {

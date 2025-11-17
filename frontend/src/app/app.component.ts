@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
-import { HeaderComponent } from './components/header/header.component';
-import { FooterComponent } from './components/footer/footer.component';
-import { CitaModalComponent } from './components/cita-modal/cita-modal.component';
+import { HeaderComponent } from './shared/header/header.component';
+import { FooterComponent } from './shared/footer/footer.component';
+import { CitaModalComponent } from './pages/modals/agendar-cita-modal/cita-modal.component';
 import { CommonModule } from '@angular/common';
 
 @Component({

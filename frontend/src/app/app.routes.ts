@@ -1,13 +1,13 @@
 // app.routes.ts
 import { Routes } from '@angular/router';
-import { ServiciosComponent } from './pages/servicios/servicios.component';
-import { EspecialidadComponent } from './pages/especialidad/especialidad.component';
+import { EspecialidadesComponent } from './pages/pacientes/especialidades/especialidades.component';
+import { MedicosComponent } from './pages/pacientes/medicos/medicos.component';
 import { LoginComponent } from './pages/login/login.component';
-import { AuthGuard } from './guards/auth.guard';
-import { DashboardComponent } from './pages/dashboardAdmin/dashboard.component';
-import { AdminGuard } from './guards/admin.guard';
-import { PagosComponent } from './pages/pagos/pagos.component'; // Agregar esta línea
-import { RegistroComponent } from './pages/registro/registro.component'; 
+import { AuthGuard } from './core/guards/auth.guard';
+import { DashboardComponent } from './pages/admin/inicio/dashboard.component';
+import { AdminGuard } from './core/guards/admin.guard';
+import { PagosComponent } from './pages/admin/pagos/pagos.component'; 
+import { RegistroComponent } from './pages/login/registro/registro.component'; 
 
 
 
@@ -16,7 +16,7 @@ export const routes: Routes = [
   { path: 'registro', component: RegistroComponent },
   { 
     path: '', 
-    component: ServiciosComponent,
+    component: EspecialidadesComponent,
     canActivate: [AuthGuard]
   },
   { 
@@ -30,8 +30,8 @@ export const routes: Routes = [
     canActivate: [AdminGuard] // Solo admin puede ver pagos
   },
   { 
-    path: 'especialidad/:id', 
-    component: EspecialidadComponent,
+    path: 'medicos/:id', 
+    component: MedicosComponent,
     canActivate: [AuthGuard]
   },
   { path: '**', redirectTo: '' }

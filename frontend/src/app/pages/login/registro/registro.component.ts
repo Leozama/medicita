@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { RegistroExitosoModalComponent } from '../../modals/registro-exitoso-modal/registro-exitoso-modal.component';
 
 interface UsuarioRegistro {
   nombre: string;
@@ -24,7 +25,7 @@ interface RegistroResponse {
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RegistroExitosoModalComponent],
   templateUrl: './registro.component.html',
 })
 export class RegistroComponent {
@@ -134,7 +135,7 @@ export class RegistroComponent {
         console.log('Respuesta del backend:', response);
 
         if (response.userId) {
-          // Registro exitoso - Mostrar popup en lugar de alert
+          // Registro exitoso - Mostrar popup
           this.mostrarPopupExito = true;
         } else {
           this.error = response.mensaje || 'Error al crear la cuenta';
@@ -171,7 +172,7 @@ export class RegistroComponent {
   }
 
   // Método para cerrar el popup y redirigir al login
-  cerrarPopupYRedirigir() {
+  onCerrarPopup() {
     this.mostrarPopupExito = false;
     this.router.navigate(['/login']);
   }
@@ -190,7 +191,7 @@ export class RegistroComponent {
       },
       error: (error) => {
         console.error('Error de conexión:', error);
-        alert('❌ No se pudo conectar con el backend');
+        alert('No se pudo conectar con el backend');
       },
     });
   }
