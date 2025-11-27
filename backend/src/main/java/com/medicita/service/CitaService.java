@@ -2,17 +2,22 @@ package com.medicita.service;
 
 import com.medicita.DTO.CitaRequestDTO;
 import com.medicita.DTO.CitaResponseDTO;
-import com.medicita.entity.Cita;
 
 import java.util.List;
 
 public interface CitaService {
-    Cita save(Cita cita);
-    List<Cita> findAll();
-    Cita findById(Integer id);
-    void deleteById(Integer id);
-    Cita update(Cita cita);
+    CitaResponseDTO save(CitaRequestDTO citaRequestDTO);
 
-    // MÉTODO MODIFICADO - ahora devuelve CitaResponseDTO
-    CitaResponseDTO createCitaFromDTO(CitaRequestDTO citaRequestDTO);
+    List<CitaResponseDTO> findAll();
+
+    CitaResponseDTO findById(Integer id);
+
+    void deleteById(Integer id);
+
+    CitaResponseDTO update(Integer id, CitaRequestDTO citaRequestDTO);
+
+    // Métodos específicos adicionales que ya retornaban DTO o son útiles
+    List<CitaResponseDTO> findCitasByPaciente(Integer pacienteId);
+
+    CitaResponseDTO updateEstadoCita(Integer id, String estado);
 }
