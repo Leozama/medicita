@@ -1,11 +1,13 @@
 package com.medicita.controller;
 
+import com.medicita.DTO.PacienteRequestDTO;
+import com.medicita.DTO.PacienteResponseDTO;
 import com.medicita.entity.Paciente;
 import com.medicita.service.AuthService;
 import com.medicita.service.PacienteService;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -22,19 +24,18 @@ public class AuthController {
 
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request) {
-        Paciente paciente = authService.login(request.getUserName(), request.getPassword());
+        PacienteResponseDTO paciente = authService.login(request.getUserName(), request.getPassword());
 
         return new LoginResponse(
                 paciente.getId(),
-                paciente.getFirstName() + " " + paciente.getSecondName(),
+                paciente.getNombreCompleto(),
                 "PACIENTE", // O puedes agregar un campo 'rol' en Paciente
-                "Login exitoso"
-        );
+                "Login exitoso");
     }
 
     @PostMapping("/login-admin")
     public LoginResponse loginAdmin(@RequestBody LoginRequest request) {
-        Paciente usuario = authService.login(request.getUserName(), request.getPassword());
+        PacienteResponseDTO usuario = authService.login(request.getUserName(), request.getPassword());
 
         // Verificación simple de admin
         if (!usuario.getUserName().equals("admin")) { // o cualquier criterio simple
@@ -43,10 +44,9 @@ public class AuthController {
 
         return new LoginResponse(
                 usuario.getId(),
-                usuario.getFirstName() + " " + usuario.getSecondName(),
+                usuario.getNombreCompleto(),
                 "ADMIN",
-                "Login admin exitoso"
-        );
+                "Login admin exitoso");
     }
 
     // CLASES INTERNAS PARA REQUEST/RESPONSE
@@ -54,10 +54,21 @@ public class AuthController {
         private String userName;
         private String password;
 
-        public String getUserName() { return userName; }
-        public void setUserName(String userName) { this.userName = userName; }
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
+        public String getUserName() {
+            return userName;
+        }
+
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
     }
 
     public static class LoginResponse {
@@ -74,10 +85,21 @@ public class AuthController {
         }
 
         // GETTERS
-        public Integer getUserId() { return userId; }
-        public String getNombreCompleto() { return nombreCompleto; }
-        public String getRol() { return rol; }
-        public String getMensaje() { return mensaje; }
+        public Integer getUserId() {
+            return userId;
+        }
+
+        public String getNombreCompleto() {
+            return nombreCompleto;
+        }
+
+        public String getRol() {
+            return rol;
+        }
+
+        public String getMensaje() {
+            return mensaje;
+        }
     }
 
     // Registro request/response
@@ -89,18 +111,53 @@ public class AuthController {
         private String password;
         private String username;
 
-        public String getNombreCompleto() { return nombreCompleto; }
-        public void setNombreCompleto(String nombreCompleto) { this.nombreCompleto = nombreCompleto; }
-        public String getEmail() { return email; }
-        public void setEmail(String email) { this.email = email; }
-        public String getTelefono() { return telefono; }
-        public void setTelefono(String telefono) { this.telefono = telefono; }
-        public String getFechaNacimiento() { return fechaNacimiento; }
-        public void setFechaNacimiento(String fechaNacimiento) { this.fechaNacimiento = fechaNacimiento; }
-        public String getPassword() { return password; }
-        public void setPassword(String password) { this.password = password; }
-        public String getUsername() { return username; }
-        public void setUsername(String username) { this.username = username; }
+        public String getNombreCompleto() {
+            return nombreCompleto;
+        }
+
+        public void setNombreCompleto(String nombreCompleto) {
+            this.nombreCompleto = nombreCompleto;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getTelefono() {
+            return telefono;
+        }
+
+        public void setTelefono(String telefono) {
+            this.telefono = telefono;
+        }
+
+        public String getFechaNacimiento() {
+            return fechaNacimiento;
+        }
+
+        public void setFechaNacimiento(String fechaNacimiento) {
+            this.fechaNacimiento = fechaNacimiento;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
     }
 
     public static class RegistroResponse {
@@ -112,8 +169,13 @@ public class AuthController {
             this.mensaje = mensaje;
         }
 
-        public Integer getUserId() { return userId; }
-        public String getMensaje() { return mensaje; }
+        public Integer getUserId() {
+            return userId;
+        }
+
+        public String getMensaje() {
+            return mensaje;
+        }
     }
 
     @PostMapping("/registro")
@@ -127,7 +189,7 @@ public class AuthController {
             try {
                 // pacienteService uses repository which provides findByUserName
                 // If user exists, return 409
-                java.util.Optional<com.medicita.entity.Paciente> existing = pacienteService.findAll().stream()
+                java.util.Optional<PacienteResponseDTO> existing = pacienteService.findAll().stream()
                         .filter(p -> request.getUsername().equals(p.getUserName()))
                         .findFirst();
                 if (existing.isPresent()) {
@@ -144,19 +206,20 @@ public class AuthController {
         if (request.getNombreCompleto() != null && !request.getNombreCompleto().isBlank()) {
             String[] parts = request.getNombreCompleto().trim().split("\\s+", 2);
             firstName = parts[0];
-            if (parts.length > 1) secondName = parts[1];
+            if (parts.length > 1)
+                secondName = parts[1];
         }
 
-        Paciente paciente = new Paciente();
-        paciente.setFirstName(firstName);
-        paciente.setSecondName(secondName);
-        paciente.setEmail(request.getEmail());
-        paciente.setTelefono(request.getTelefono());
-        paciente.setFechaNacimiento(request.getFechaNacimiento());
-        paciente.setUserName(request.getUsername());
-        paciente.setPassword(request.getPassword());
+        PacienteRequestDTO pacienteDTO = new PacienteRequestDTO();
+        pacienteDTO.setFirstName(firstName);
+        pacienteDTO.setSecondName(secondName);
+        pacienteDTO.setEmail(request.getEmail());
+        pacienteDTO.setTelefono(request.getTelefono());
+        pacienteDTO.setFechaNacimiento(request.getFechaNacimiento());
+        pacienteDTO.setUserName(request.getUsername());
+        pacienteDTO.setPassword(request.getPassword());
 
-        Paciente saved = pacienteService.save(paciente);
+        PacienteResponseDTO saved = pacienteService.save(pacienteDTO);
         return new RegistroResponse(saved.getId(), "Registro exitoso");
     }
 }

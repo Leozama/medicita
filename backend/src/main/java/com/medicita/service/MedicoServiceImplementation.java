@@ -1,5 +1,7 @@
 package com.medicita.service;
 
+import com.medicita.DTO.MedicoRequestDTO;
+import com.medicita.DTO.MedicoResponseDTO;
 import com.medicita.entity.Medico;
 import com.medicita.repository.MedicoRepository;
 import org.springframework.stereotype.Service;
@@ -32,18 +34,31 @@ public class MedicoServiceImplementation implements MedicoService {
     }
 
     @Override
-    public Medico save(Medico medico) {
-        return medicoRepository.save(medico);
+    public MedicoResponseDTO save(MedicoRequestDTO medicoRequestDTO) {
+        Medico medico = new Medico();
+        medico.setFirstName(medicoRequestDTO.getFirstName());
+        medico.setSecondName(medicoRequestDTO.getSecondName());
+        medico.setEspecialidad(medicoRequestDTO.getEspecialidad());
+        medico.setHorario(medicoRequestDTO.getHorario());
+        medico.setCostoConsulta(medicoRequestDTO.getCostoConsulta());
+
+        Medico savedMedico = medicoRepository.save(medico);
+        return convertirAResponseDTO(savedMedico);
     }
 
     @Override
-    public List<Medico> findAll() {
-        return medicoRepository.findAll();
+    public List<MedicoResponseDTO> findAll() {
+        List<Medico> medicos = medicoRepository.findAll();
+        return medicos.stream()
+                .map(this::convertirAResponseDTO)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override
-    public Medico findById(Integer id) {
-        return medicoRepository.findById(id).get();
+    public MedicoResponseDTO findById(Integer id) {
+        Medico medico = medicoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Médico no encontrado con ID: " + id));
+        return convertirAResponseDTO(medico);
     }
 
     @Override
@@ -52,7 +67,26 @@ public class MedicoServiceImplementation implements MedicoService {
     }
 
     @Override
-    public Medico update(Medico medico) {
-        return medicoRepository.save(medico);
+    public MedicoResponseDTO update(Integer id, MedicoRequestDTO medicoRequestDTO) {
+        Medico medicoDb = medicoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Médico no encontrado con ID: " + id));
+
+        medicoDb.setFirstName(medicoRequestDTO.getFirstName());
+        medicoDb.setSecondName(medicoRequestDTO.getSecondName());
+        medicoDb.setEspecialidad(medicoRequestDTO.getEspecialidad());
+        medicoDb.setHorario(medicoRequestDTO.getHorario());
+        medicoDb.setCostoConsulta(medicoRequestDTO.getCostoConsulta());
+
+        Medico updatedMedico = medicoRepository.save(medicoDb);
+        return convertirAResponseDTO(updatedMedico);
+    }
+
+    private MedicoResponseDTO convertirAResponseDTO(Medico medico) {
+        return new MedicoResponseDTO(
+                medico.getId(),
+                medico.getFirstName() + " " + medico.getSecondName(),
+                medico.getEspecialidad(),
+                medico.getHorario(),
+                medico.getCostoConsulta());
     }
 }

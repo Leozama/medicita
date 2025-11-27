@@ -1,10 +1,29 @@
 package com.medicita.service;
 
+import com.medicita.DTO.PacienteRequestDTO;
+import com.medicita.DTO.PacienteResponseDTO;
 import com.medicita.entity.Paciente;
 
 import java.util.List;
 
 /**
+ * INTERFACE DE SERVICIO - CONTRATO DE LÓGICA DE NEGOCIO
+ *
+ * RESPONSABILIDAD:
+ * - Definir los métodos de lógica de negocio disponibles
+ * - Servir como contrato entre Controller y ServiceImpl
+ * - Centralizar reglas de negocio
+ *
+ * REGLAS:
+ * package com.medicita.service;
+ * 
+ * import com.medicita.entity.Paciente;
+ * import com.medicita.dto.PacienteRequestDTO;
+ * import com.medicita.dto.PacienteResponseDTO;
+ * 
+ * import java.util.List;
+ * 
+ * /**
  * INTERFACE DE SERVICIO - CONTRATO DE LÓGICA DE NEGOCIO
  *
  * RESPONSABILIDAD:
@@ -19,9 +38,13 @@ import java.util.List;
  */
 
 public interface PacienteService {
-    Paciente save(Paciente paciente);
-    List<Paciente> findAll();
-    Paciente findById(Integer id);
+    PacienteResponseDTO save(PacienteRequestDTO pacienteRequestDTO);
+
+    List<PacienteResponseDTO> findAll();
+
+    PacienteResponseDTO findById(Integer id);
+
     void deleteById(Integer id);
-    Paciente update(Paciente paciente);
+
+    PacienteResponseDTO update(Integer id, PacienteRequestDTO pacienteRequestDTO);
 }
