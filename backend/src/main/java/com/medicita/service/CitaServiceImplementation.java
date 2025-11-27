@@ -52,7 +52,7 @@ public class CitaServiceImplementation implements CitaService {
         return citaRepository.save(cita);
     }
 
-    // Método para crear cita desde DTO - MODIFICADO: ahora devuelve CitaResponseDTO
+    // Metodo para crear cita desde DTO - MODIFICADO: ahora devuelve CitaResponseDTO
     @Override
     public CitaResponseDTO createCitaFromDTO(CitaRequestDTO citaRequestDTO) {
         // Validar que los IDs no sean nulos
@@ -92,7 +92,7 @@ public class CitaServiceImplementation implements CitaService {
         return convertirCitaAResponseDTO(citaGuardada);
     }
 
-    // Método para actualizar con DTO
+    // Metodo para actualizar con DTO
     public Cita updateCitaFromDTO(Integer id, CitaRequestDTO citaRequestDTO) {
     Cita citaExistente = citaRepository.findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cita no encontrada con ID: " + id));
@@ -157,7 +157,7 @@ public class CitaServiceImplementation implements CitaService {
         return citaRepository.save(citaExistente);
     }
 
-    // Método para obtener todas las citas como DTO
+    // Metodo para obtener todas las citas como DTO
     public List<CitaResponseDTO> findAllAsDTO() {
         List<Cita> citas = citaRepository.findAllWithMedicoAndPaciente();
         return citas.stream().map(this::convertirCitaAResponseDTO).collect(Collectors.toList());
@@ -185,7 +185,7 @@ public class CitaServiceImplementation implements CitaService {
         return citas.stream().map(this::convertirCitaAResponseDTO).collect(Collectors.toList());
     }
 
-    // MÉTODO AUXILIAR PARA CONVERTIR CITA A RESPONSE DTO
+    // MeTODO AUXILIAR PARA CONVERTIR CITA A RESPONSE DTO
     public CitaResponseDTO convertirCitaAResponseDTO(Cita cita) {
         CitaResponseDTO dto = new CitaResponseDTO();
 
