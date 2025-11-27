@@ -2,6 +2,8 @@ package com.medicita.DTO;
 
 public class MedicoResponseDTO {
     private int id;
+    private String firstName;
+    private String secondName;
     private String nombreCompleto;
     private String especialidad;
     private String horario;
@@ -10,8 +12,11 @@ public class MedicoResponseDTO {
     public MedicoResponseDTO() {
     }
 
-    public MedicoResponseDTO(int id, String nombreCompleto, String especialidad, String horario, Double costoConsulta) {
+    public MedicoResponseDTO(int id, String firstName, String secondName, String nombreCompleto, String especialidad,
+            String horario, Double costoConsulta) {
         this.id = id;
+        this.firstName = firstName;
+        this.secondName = secondName;
         this.nombreCompleto = nombreCompleto;
         this.especialidad = especialidad;
         this.horario = horario;
@@ -56,5 +61,21 @@ public class MedicoResponseDTO {
 
     public void setCostoConsulta(Double costoConsulta) {
         this.costoConsulta = costoConsulta;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getSecondName() {
+        return secondName;
+    }
+
+    public void setSecondName(String secondName) {
+        this.secondName = secondName;
     }
 }

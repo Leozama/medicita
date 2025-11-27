@@ -55,7 +55,7 @@ export class CitaService {
     private http: HttpClient,
     private authService: AuthService,
     private medicoService: MedicoService
-  ) {}
+  ) { }
 
   abrirModal(medicoId: number, medicoNombre: string, especialidad: string) {
     console.log('🟢 SERVICIO: Abriendo modal para:', medicoNombre);
@@ -158,7 +158,7 @@ export class CitaService {
     };
 
     // No hacer catch aquí para que el componente pueda manejar errores específicos (p.ej. 409)
-    return this.http.post<any>(`${this.baseUrl}/dto`, payload).pipe(
+    return this.http.post<any>(this.baseUrl, payload).pipe(
       map((resp) => {
         console.log('Cita creada backend:', resp);
         // Después de crear la cita, refrescar la lista de citas del paciente
@@ -185,7 +185,7 @@ export class CitaService {
   /** Marcar cita como CANCELADA y refrescar la lista del paciente */
   deleteCita(citaId: number, pacienteId: number): Observable<boolean> {
     const payload = { estado: 'CANCELADA' };
-    return this.http.put<any>(`${this.baseUrl}/dto/${citaId}/estado`, payload).pipe(
+    return this.http.put<any>(`${this.baseUrl}/${citaId}/estado`, payload).pipe(
       map(() => {
         this.refreshCitasPaciente(pacienteId);
         return true;

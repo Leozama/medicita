@@ -84,6 +84,8 @@ public class MedicoServiceImplementation implements MedicoService {
     private MedicoResponseDTO convertirAResponseDTO(Medico medico) {
         return new MedicoResponseDTO(
                 medico.getId(),
+                medico.getFirstName(),
+                medico.getSecondName(),
                 medico.getFirstName() + " " + medico.getSecondName(),
                 medico.getEspecialidad(),
                 medico.getHorario(),
