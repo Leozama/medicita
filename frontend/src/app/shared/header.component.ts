@@ -3,10 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AuthService, User } from '../../core/services/auth.service';
+import { AuthService, User } from '../services/auth.service';
 import { HttpClient } from '@angular/common/http';
-import { CitaService, CitaResponseDTO } from '../../core/services/cita.service';
-import { UserSidebarComponent } from '../sidebar/user-sidebar.component';
+import { CitaService, CitaResponseDTO } from '../services/cita.service';
+import { UserSidebarComponent } from './user-sidebar.component';
 
 @Component({
   selector: 'app-header',
@@ -30,17 +30,17 @@ export class HeaderComponent implements OnInit {
     private router: Router,
     private http: HttpClient,
     private citaService: CitaService
-  ) {}
+  ) { }
 
   ngOnInit() {
-    this.authService.currentUser$.subscribe((user) => {
+    this.authService.currentUser$.subscribe((user: any) => {
       this.currentUser = user;
       this.isLoggedIn = !!user;
 
       console.log('🔍 DEBUG - Usuario desde AuthService:', user);
-    console.log('🔍 DEBUG - Email:', user?.email);
-    console.log('🔍 DEBUG - Username:', user?.username);
-    console.log('🔍 DEBUG - Tipo:', user?.tipo);
+      console.log('🔍 DEBUG - Email:', user?.email);
+      console.log('🔍 DEBUG - Username:', user?.username);
+      console.log('🔍 DEBUG - Tipo:', user?.tipo);
 
       // Si es paciente, cargar información completa y citas
       if (user && user.tipo === 'paciente') {
@@ -50,7 +50,7 @@ export class HeaderComponent implements OnInit {
         this.citas = [];
       }
 
-      
+
 
 
 
@@ -68,7 +68,7 @@ export class HeaderComponent implements OnInit {
             email: pacienteInfo.email,
             telefono: pacienteInfo.telefono,
             username: pacienteInfo.userName,
-           
+
           };
         }
         console.log('Información completa del paciente cargada:', pacienteInfo);
@@ -103,8 +103,8 @@ export class HeaderComponent implements OnInit {
     if (this.currentUser?.nombre) {
       return this.currentUser.nombre
         .split(' ')
-        .filter((_, index) => index === 0 || index === 1)
-        .map((nombre) => nombre[0])
+        .filter((_: any, index: any) => index === 0 || index === 1)
+        .map((nombre: any) => nombre[0])
         .join('')
         .toUpperCase();
     }

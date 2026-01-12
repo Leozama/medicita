@@ -2,15 +2,15 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { CitaService } from '../../../core/services/cita.service';
-import { CitaModalComponent } from '../../modals/agendar-cita-modal/cita-modal.component';
-import { MedicoService, Medico } from '../../../core/services/medico.service';
+import { CitaService } from '../services/cita.service';
+import { CitaModalComponent } from '../modals/cita-modal.component';
+import { MedicoService, Medico } from '../services/medico.service';
 
 @Component({
   selector: 'app-medicos',
   standalone: true,
-  imports: [CommonModule, CitaModalComponent], 
-    templateUrl: "medicos.component.html"
+  imports: [CommonModule, CitaModalComponent],
+  templateUrl: "medicos.component.html"
 })
 export class MedicosComponent implements OnInit {
   especialidadId: string = '';
@@ -22,12 +22,12 @@ export class MedicosComponent implements OnInit {
     private router: Router,
     private citaService: CitaService,
     private medicoService: MedicoService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.currentUrl = this.router.url;
     console.log('URL actual:', this.currentUrl);
-    
+
     this.route.paramMap.subscribe(params => {
       this.especialidadId = params.get('id') || '';
       console.log('medico ID:', this.especialidadId);
@@ -53,24 +53,24 @@ export class MedicosComponent implements OnInit {
     });
   }
 
-    // En medicos.component.ts - modifica el método agendarCita
-    agendarCita(medico: Medico) {
+  // En medicos.component.ts - modifica el método agendarCita
+  agendarCita(medico: Medico) {
     console.log('DEBUG: Click en Agendar Cita');
     console.log('DEBUG: Médico:', medico);
     console.log('DEBUG: Servicio inyectado:', this.citaService);
-    
+
     this.citaService.abrirModal(
-    medico.id,
-    medico.nombre || '',
-    medico.especialidad
+      medico.id,
+      medico.nombre || '',
+      medico.especialidad
     );
-    
+
     // Verifica si el modal se abre
-    this.citaService.mostrarModal$.subscribe(estado => {
-        console.log('DEBUG: Estado del modal:', estado);
+    this.citaService.mostrarModal$.subscribe((estado: any) => {
+      console.log('DEBUG: Estado del modal:', estado);
     });
-    }
-    
+  }
+
   getNombreEspecialidad(): string {
     const nombres: { [key: string]: string } = {
       'cardiologia': 'Cardiología',

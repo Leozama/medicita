@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { RegistroExitosoModalComponent } from '../../modals/registro-exitoso-modal/registro-exitoso-modal.component';
+import { RegistroExitosoModalComponent } from '../modals/registro-exitoso-modal.component';
 
 interface UsuarioRegistro {
   nombre: string;

@@ -2,7 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CitaService, CitaData } from '../../../core/services/cita.service';
+import { CitaService, CitaData } from '../services/cita.service';
 
 @Component({
   selector: 'app-cita-modal',
@@ -35,11 +35,11 @@ export class CitaModalComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.citaService.mostrarModal$.subscribe((mostrar) => {
+    this.citaService.mostrarModal$.subscribe((mostrar: any) => {
       this.mostrarModal = mostrar;
     });
 
-    this.citaService.citaData$.subscribe((data) => {
+    this.citaService.citaData$.subscribe((data: any) => {
       this.citaData = data;
       // Si el servicio proporcionó horas disponibles para el médico, usarlas
       if (this.citaData?.horasDisponibles && this.citaData.horasDisponibles.length) {
@@ -99,7 +99,7 @@ export class CitaModalComponent implements OnInit {
       }
       // Intentar crear la cita en el backend
       this.citaService.confirmarCitaBackend(this.citaData).subscribe({
-        next: (success) => {
+        next: (success: any) => {
           if (success) {
             this.citaService.cerrarModal();
             alert(
@@ -109,7 +109,7 @@ export class CitaModalComponent implements OnInit {
             alert(' No se pudo agendar la cita. Verifica tu conexión o inicia sesión.');
           }
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error('Error reservando cita:', err);
           if (err && err.status === 409) {
             alert(err.error?.message || 'El turno ya está ocupado para ese médico, fecha y hora.');

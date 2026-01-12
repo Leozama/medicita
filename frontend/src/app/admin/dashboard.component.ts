@@ -3,9 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AuthService, User } from '../../../core/services/auth.service';
-import { MedicoService } from '../../../core/services/medico.service';
-import { AgregarMedicoModalComponent, NuevoMedico } from '../../modals/agregar-medico-modal/agregar-medico-modal.component';
+import { AuthService, User } from '../services/auth.service';
+import { MedicoService } from '../services/medico.service';
+import { AgregarMedicoModalComponent, NuevoMedico } from '../modals/agregar-medico-modal.component';
 
 interface Medico {
   id: number;
@@ -32,7 +32,7 @@ export class DashboardComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private medicoService: MedicoService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
@@ -47,8 +47,8 @@ export class DashboardComponent implements OnInit {
 
   cargarMedicos(): void {
     this.medicoService.findAll().subscribe({
-      next: (list) => {
-        this.medicos = list.map((m) => ({
+      next: (list: any) => {
+        this.medicos = list.map((m: any) => ({
           id: m.id,
           nombre: (m.nombre ?? `${m.firstName ?? ''} ${m.secondName ?? ''}`).trim(),
           especialidad: m.especialidad ?? '',
@@ -56,7 +56,7 @@ export class DashboardComponent implements OnInit {
           horario: m.horario ?? '',
         }));
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error cargando médicos:', err);
       },
     });
@@ -82,7 +82,7 @@ export class DashboardComponent implements OnInit {
     }
 
     this.medicoService.deleteMedico(id).subscribe({
-      next: (ok) => {
+      next: (ok: any) => {
         if (ok) {
           this.medicos = this.medicos.filter((m) => m.id !== id);
           this.medicoSeleccionado = null;
@@ -91,7 +91,7 @@ export class DashboardComponent implements OnInit {
           alert('No se pudo eliminar el médico. Revisa la consola para más detalles.');
         }
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error eliminando medico:', err);
         alert('Ocurrió un error eliminando el médico. Revisa la consola.');
       },
@@ -111,12 +111,11 @@ export class DashboardComponent implements OnInit {
     };
 
     this.medicoService.createMedico(payload).subscribe({
-      next: (created) => {
+      next: (created: any) => {
         const nuevo: Medico = {
           id: created.id,
-          nombre: `${created.firstName || firstName}${
-            created.secondName ? ' ' + created.secondName : ''
-          }`.trim(),
+          nombre: `${created.firstName || firstName}${created.secondName ? ' ' + created.secondName : ''
+            }`.trim(),
           especialidad: created.especialidad || nuevoMedico.especialidad,
           disponible: nuevoMedico.disponible,
           horario: created.horario || `${nuevoMedico.horaInicio} - ${nuevoMedico.horaFin}`,
@@ -126,7 +125,7 @@ export class DashboardComponent implements OnInit {
         this.mostrarModalAgregar = false;
         alert(`Médico ${nuevo.nombre} agregado y guardado en la base de datos`);
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error creando medico en backend:', err);
         alert('No se pudo guardar el médico en el servidor. Intenta de nuevo.');
       },

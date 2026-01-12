@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { RouterOutlet, Router } from '@angular/router';
-import { HeaderComponent } from './shared/header/header.component';
-import { FooterComponent } from './shared/footer/footer.component';
-import { CitaModalComponent } from './pages/modals/agendar-cita-modal/cita-modal.component';
+import { HeaderComponent } from './shared/header.component';
+import { FooterComponent } from './shared/footer.component';
+import { CitaModalComponent } from './modals/cita-modal.component';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -25,8 +25,8 @@ import { CommonModule } from '@angular/common';
   `
 })
 export class AppComponent {
-  
-  constructor(private router: Router) {}
+
+  constructor(private router: Router) { }
 
   isLoginPage(): boolean {
     return this.router.url === '/login';
