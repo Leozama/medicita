@@ -18,7 +18,7 @@ export interface Medico {
 @Injectable({ providedIn: 'root' })
 export class MedicoService {
   private baseUrl = 'http://localhost:8080/api/medicos';
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   findById(id: number): Observable<Medico | null> {
     return this.http.get<Medico>(`${this.baseUrl}/${id}`).pipe(
@@ -56,6 +56,20 @@ export class MedicoService {
     return this.http.post<Medico>(this.baseUrl, payload).pipe(
       catchError((err) => {
         console.error('Error creando medico', err);
+        throw err;
+      })
+    );
+  }
+
+  /**
+   * Actualiza un médico existente en el backend.
+   * Se espera un objeto con las propiedades usadas por el backend (firstName, secondName, especialidad, horario, costoConsulta?).
+   * Devuelve el Medico actualizado.
+   */
+  updateMedico(id: number, payload: any): Observable<Medico> {
+    return this.http.put<Medico>(`${this.baseUrl}/${id}`, payload).pipe(
+      catchError((err) => {
+        console.error('Error actualizando medico', err);
         throw err;
       })
     );

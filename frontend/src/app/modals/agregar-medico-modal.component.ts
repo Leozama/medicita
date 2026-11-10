@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 export interface NuevoMedico {
+  id?: number;
   nombre: string;
   apellido: string;
   especialidad: string;
@@ -20,6 +21,20 @@ export interface NuevoMedico {
 })
 export class AgregarMedicoModalComponent {
   @Input() mostrarModal: boolean = false;
+  @Input() modoEdicion: boolean = false;
+  @Input() set medicoAEditar(medico: any) {
+    if (medico) {
+      this.nuevoMedico = {
+        id: medico.id,
+        nombre: medico.nombre?.split(' ')[0] || '',
+        apellido: medico.nombre?.split(' ').slice(1).join(' ') || '',
+        especialidad: medico.especialidad,
+        disponible: medico.disponible ?? true,
+        horaInicio: medico.horario?.split(' - ')[0] || '',
+        horaFin: medico.horario?.split(' - ')[1] || '',
+      };
+    }
+  }
   @Output() cerrarModal = new EventEmitter<void>();
   @Output() guardarMedico = new EventEmitter<NuevoMedico>();
 

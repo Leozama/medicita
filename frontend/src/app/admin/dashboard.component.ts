@@ -25,6 +25,7 @@ export class DashboardComponent implements OnInit {
   currentUser: User | null = null;
   medicoSeleccionado: Medico | null = null;
   mostrarModalAgregar = false;
+  modoEdicion = false;
 
   medicos: Medico[] = [];
 
@@ -98,6 +99,12 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  editarMedicoSeleccionado(): void {
+    if (!this.medicoSeleccionado) return;
+    this.modoEdicion = true;
+    this.mostrarModalAgregar = true;
+  }
+
   onGuardarMedico(nuevoMedico: NuevoMedico): void {
     const firstName = nuevoMedico.nombre.trim();
     const secondName = nuevoMedico.apellido.trim();
@@ -110,30 +117,59 @@ export class DashboardComponent implements OnInit {
       costoConsulta: null,
     };
 
-    this.medicoService.createMedico(payload).subscribe({
-      next: (created: any) => {
-        const nuevo: Medico = {
-          id: created.id,
-          nombre: `${created.firstName || firstName}${created.secondName ? ' ' + created.secondName : ''
-            }`.trim(),
-          especialidad: created.especialidad || nuevoMedico.especialidad,
-          disponible: nuevoMedico.disponible,
-          horario: created.horario || `${nuevoMedico.horaInicio} - ${nuevoMedico.horaFin}`,
-        };
+    // Si es modo edición, actualizar
+    if (this.modoEdicion && nuevoMedico.id) {
+      this.medicoService.updateMedico(nuevoMedico.id, payload).subscribe({
+        next: (updated: any) => {
+          const index = this.medicos.findIndex((m) => m.id === nuevoMedico.id);
+          if (index !== -1) {
+            this.medicos[index] = {
+              id: updated.id,
+              nombre: `${updated.firstName || firstName}${updated.secondName ? ' ' + updated.secondName : ''
+                }`.trim(),
+              especialidad: updated.especialidad || nuevoMedico.especialidad,
+              disponible: nuevoMedico.disponible,
+              horario: updated.horario || `${nuevoMedico.horaInicio} - ${nuevoMedico.horaFin}`,
+            };
+          }
+          this.mostrarModalAgregar = false;
+          this.modoEdicion = false;
+          this.medicoSeleccionado = null;
+          alert(`Médico ${firstName} ${secondName} actualizado correctamente`);
+        },
+        error: (err: any) => {
+          console.error('Error actualizando medico en backend:', err);
+          alert('No se pudo actualizar el médico en el servidor. Intenta de nuevo.');
+        },
+      });
+    } else {
+      // Modo crear
+      this.medicoService.createMedico(payload).subscribe({
+        next: (created: any) => {
+          const nuevo: Medico = {
+            id: created.id,
+            nombre: `${created.firstName || firstName}${created.secondName ? ' ' + created.secondName : ''
+              }`.trim(),
+            especialidad: created.especialidad || nuevoMedico.especialidad,
+            disponible: nuevoMedico.disponible,
+            horario: created.horario || `${nuevoMedico.horaInicio} - ${nuevoMedico.horaFin}`,
+          };
 
-        this.medicos.push(nuevo);
-        this.mostrarModalAgregar = false;
-        alert(`Médico ${nuevo.nombre} agregado y guardado en la base de datos`);
-      },
-      error: (err: any) => {
-        console.error('Error creando medico en backend:', err);
-        alert('No se pudo guardar el médico en el servidor. Intenta de nuevo.');
-      },
-    });
+          this.medicos.push(nuevo);
+          this.mostrarModalAgregar = false;
+          alert(`Médico ${nuevo.nombre} agregado y guardado en la base de datos`);
+        },
+        error: (err: any) => {
+          console.error('Error creando medico en backend:', err);
+          alert('No se pudo guardar el médico en el servidor. Intenta de nuevo.');
+        },
+      });
+    }
   }
 
   onCerrarModal(): void {
     this.mostrarModalAgregar = false;
+    this.modoEdicion = false;
   }
 
   getIniciales(nombreCompleto: string): string {
