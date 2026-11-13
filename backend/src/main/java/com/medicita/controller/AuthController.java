@@ -29,10 +29,12 @@ public class AuthController {
     public LoginResponseDTO login(@RequestBody LoginRequestDTO request) {
         PacienteResponseDTO paciente = authService.login(request.getUserName(), request.getPassword());
 
+        String rol = "admin".equalsIgnoreCase(paciente.getUserName()) ? "ADMIN" : "PACIENTE";
+
         return new LoginResponseDTO(
                 paciente.getId(),
                 paciente.getNombreCompleto(),
-                "PACIENTE", // O puedes agregar un campo 'rol' en Paciente
+                rol,
                 "Login exitoso");
     }
 
@@ -41,8 +43,8 @@ public class AuthController {
         PacienteResponseDTO usuario = authService.login(request.getUserName(), request.getPassword());
 
         // Verificación simple de admin
-        if (!usuario.getUserName().equals("admin")) { // o cualquier criterio simple
-            throw new RuntimeException("Acceso denegado: no tiene permisos de administrador");
+        if (!"admin".equalsIgnoreCase(usuario.getUserName())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Acceso denegado: no tiene permisos de administrador");
         }
 
         return new LoginResponseDTO(

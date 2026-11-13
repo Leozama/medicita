@@ -20,14 +20,22 @@ public class AuthService {
 
     public PacienteResponseDTO login(String userName, String password) {
         Optional<Paciente> pacienteOpt = pacienteRepository.findByUserName(userName);
+        if (pacienteOpt.isEmpty()) {
+            pacienteOpt = pacienteRepository.findByEmail(userName);
+        }
 
         if (pacienteOpt.isPresent()) {
             Paciente paciente = pacienteOpt.get();
             // Comparación simple de contraseñas (para demo universidad)
             if (paciente.getPassword() != null && paciente.getPassword().equals(password)) {
+                String nombreCompleto = (paciente.getFirstName() != null ? paciente.getFirstName() : "")
+                        + (paciente.getSecondName() != null && !paciente.getSecondName().isBlank()
+                                ? " " + paciente.getSecondName()
+                                : "");
+
                 return new PacienteResponseDTO(
                         paciente.getId(),
-                        paciente.getFirstName() + " " + paciente.getSecondName(),
+                        nombreCompleto.trim(),
                         paciente.getEmail(),
                         paciente.getTelefono(),
                         paciente.getFechaNacimiento(),

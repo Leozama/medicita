@@ -41,19 +41,6 @@ export class AuthService {
    * Devuelve Observable<boolean> indicando éxito o fracaso.
    */
   login(email: string, password: string): Observable<boolean> {
-    // Fallback local para credenciales de desarrollo: admin / admin123
-    // Esto permite entrar como administrador sin depender del backend durante desarrollo.
-    if (email === 'admin' && password === 'admin123') {
-      const user: User = {
-        id: 0,
-        email,
-        nombre: 'Administrador',
-        tipo: 'admin',
-      };
-      this.setUser(user);
-      return of(true);
-    }
-
     const payload = { userName: email, password };
     return this.http.post<LoginResponse>(`${this.baseUrl}/login`, payload).pipe(
       map((resp) => {
