@@ -14,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "https://medicita-1.onrender.com"})
 public class AuthController {
 
     private final AuthService authService;

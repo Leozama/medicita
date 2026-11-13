@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface Medico {
   id: number;
@@ -17,7 +18,7 @@ export interface Medico {
 
 @Injectable({ providedIn: 'root' })
 export class MedicoService {
-  private baseUrl = 'http://localhost:8080/api/medicos';
+  private baseUrl = `${environment.apiUrl}/medicos`;
   constructor(private http: HttpClient) { }
 
   findById(id: number): Observable<Medico | null> {

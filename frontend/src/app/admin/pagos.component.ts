@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 
 interface Pago {
   pagoId?: number;
@@ -39,7 +40,7 @@ interface PagoResponseDTO {
   templateUrl: './pagos.component.html',
 })
 export class PagosComponent implements OnInit {
-  private baseUrl = 'http://localhost:8080/api/pagos';
+  private baseUrl = `${environment.apiUrl}/pagos`;
 
   pagos: Pago[] = [];
 

@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { catchError, map } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 import { MedicoService } from './medico.service';
+import { environment } from '../../environments/environment';
 
 export interface CitaData {
   medicoId: number;
@@ -49,7 +50,7 @@ export class CitaService {
   citasPaciente$ = this.citasPacienteSource.asObservable();
 
   // Base URL del backend
-  private baseUrl = 'http://localhost:8080/api/citas';
+  private baseUrl = `${environment.apiUrl}/citas`;
 
   constructor(
     private http: HttpClient,

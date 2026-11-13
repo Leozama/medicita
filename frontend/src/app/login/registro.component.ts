@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { RegistroExitosoModalComponent } from '../modals/registro-exitoso-modal.component';
+import { environment } from '../../environments/environment';
 
 interface UsuarioRegistro {
   nombre: string;
@@ -48,7 +49,7 @@ export class RegistroComponent {
   showPassword = false;
   mostrarPopupExito = false;
 
-  private baseUrl = 'http://localhost:8080/api/auth';
+  private baseUrl = `${environment.apiUrl}/auth`;
 
   constructor(private router: Router, private http: HttpClient) {
     // Inicializar la fecha máxima permitida para el selector de fecha (hoy)
@@ -151,7 +152,7 @@ export class RegistroComponent {
         if (error.status === 0) {
           // Error de conexión (CORS, servidor caído, etc.)
           this.error =
-            'No se pudo conectar con el servidor. Verifica que el backend esté ejecutándose en http://localhost:8080';
+            `No se pudo conectar con el servidor. Verifica que el backend esté ejecutándose en ${environment.apiUrl}`;
         } else if (error.status === 400) {
           // Error de validación
           this.error =

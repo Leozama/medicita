@@ -7,6 +7,7 @@ import { AuthService, User } from '../services/auth.service';
 import { HttpClient } from '@angular/common/http';
 import { CitaService, CitaResponseDTO } from '../services/cita.service';
 import { UserSidebarComponent } from './user-sidebar.component';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-header',
@@ -22,8 +23,8 @@ export class HeaderComponent implements OnInit {
   // Lista de citas cargada desde backend
   citas: any[] = [];
 
-  private pagosBase = 'http://localhost:8080/api/pagos';
-  private pacientesBase = 'http://localhost:8080/api/pacientes';
+  private pagosBase = `${environment.apiUrl}/pagos`;
+  private pacientesBase = `${environment.apiUrl}/pacientes`;
 
   constructor(
     private authService: AuthService,
