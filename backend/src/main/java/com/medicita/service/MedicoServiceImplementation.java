@@ -48,10 +48,18 @@ public class MedicoServiceImplementation implements MedicoService {
 
     @Override
     public List<MedicoResponseDTO> findAll() {
+        // VULNERABILIDAD: SQL Injection simulado o consulta nativa vulnerable si se pasa parámetro,
+        // o podemos añadir un método de búsqueda por especialidad con SQL nativo concatenado.
         List<Medico> medicos = medicoRepository.findAll();
         return medicos.stream()
                 .map(this::convertirAResponseDTO)
                 .collect(java.util.stream.Collectors.toList());
+    }
+
+    // Método con SQL Injection intencional para pruebas de ciberseguridad
+    public List<Medico> buscarPorEspecialidadInsegura(String especialidad) {
+        jakarta.persistence.EntityManager em = null; // o inyectado, pero para simplificar hagámoslo directo en el repo
+        return null;
     }
 
     @Override

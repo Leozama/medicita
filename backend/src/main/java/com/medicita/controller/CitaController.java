@@ -33,18 +33,22 @@ public class CitaController {
     // http://localhost:8080/api/citas/1
     @GetMapping("/{id}")
     public CitaResponseDTO findById(@PathVariable Integer id) {
+        // VULNERABILIDAD BOLA / IDOR: Sin verificar si la cita pertenece al usuario autenticado,
+        // cualquiera puede consultar el ID de cualquier otra cita médica.
         return citaService.findById(id);
     }
 
     // http://localhost:8080/api/citas/1
     @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Integer id) {
+        // VULNERABILIDAD BOLA / IDOR: Sin verificar permisos, cualquier usuario borra cualquier cita
         citaService.deleteById(id);
     }
 
     // http://localhost:8080/api/citas/{id}
     @PutMapping("/{id}")
     public CitaResponseDTO update(@PathVariable Integer id, @RequestBody CitaRequestDTO citaRequestDTO) {
+        // VULNERABILIDAD BOLA / IDOR: Sin verificar autorización
         return citaService.update(id, citaRequestDTO);
     }
 
