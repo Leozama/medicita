@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://medicita-79fu.onrender.com/api',
+  apiUrl: 'https://medicita-tb1s.onrender.com/api',
 };
 
