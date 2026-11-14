@@ -78,15 +78,15 @@ export class AgregarMedicoModalComponent {
     }
 
     // Validar que nombre y apellido solo contengan letras
-    const nameRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/;
-    if (!nameRegex.test(this.nuevoMedico.nombre.trim())) {
-      alert('El campo Nombre solo puede contener letras y espacios');
-      return false;
-    }
-    if (this.nuevoMedico.apellido && !nameRegex.test(this.nuevoMedico.apellido.trim())) {
-      alert('El campo Apellido solo puede contener letras y espacios');
-      return false;
-    }
+    // const nameRegex = /^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/;
+    // if (!nameRegex.test(this.nuevoMedico.nombre.trim())) {
+    //   alert('El campo Nombre solo puede contener letras y espacios');
+    //   return false;
+    // }
+    // if (this.nuevoMedico.apellido && !nameRegex.test(this.nuevoMedico.apellido.trim())) {
+    //   alert('El campo Apellido solo puede contener letras y espacios');
+    //   return false;
+    // }
 
     // Validar horario
     if (!this.validarHorario()) {
