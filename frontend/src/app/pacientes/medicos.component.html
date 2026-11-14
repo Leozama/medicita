@@ -21,6 +21,61 @@
   Volver a servicios
 </button>
 
+<!-- Buscador de médicos (vulnerable a SQL Injection) -->
+<div class="container mx-auto px-4 pt-8">
+  <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md border border-gray-200">
+    <h2 class="text-xl font-bold text-gray-800 mb-1">Buscar médicos por especialidad</h2>
+    <p class="text-sm text-gray-500 mb-4">
+      Escribe una especialidad (ej. Cardiología) para consultar los médicos disponibles.
+    </p>
+
+    <form (ngSubmit)="buscar()" class="flex flex-col sm:flex-row gap-3">
+      <input
+        type="text"
+        name="busqueda"
+        [(ngModel)]="busqueda"
+        placeholder="Cardiología"
+        class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+      />
+      <button
+        type="submit"
+        [disabled]="buscando"
+        class="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-60"
+      >
+        {{ buscando ? 'Buscando...' : 'Buscar' }}
+      </button>
+    </form>
+
+    <p *ngIf="errorBusqueda" class="text-red-600 text-sm mt-3">{{ errorBusqueda }}</p>
+
+    <div *ngIf="resultadosBusqueda.length > 0" class="mt-5 overflow-x-auto">
+      <p class="text-sm text-gray-600 mb-2">{{ resultadosBusqueda.length }} resultado(s)</p>
+      <table class="min-w-full text-sm border border-gray-200">
+        <thead class="bg-gray-100">
+          <tr>
+            <th
+              *ngFor="let col of getColumnas()"
+              class="px-3 py-2 text-left font-semibold text-gray-700 border-b"
+            >
+              {{ col }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let fila of resultadosBusqueda" class="hover:bg-gray-50">
+            <td
+              *ngFor="let col of getColumnas()"
+              class="px-3 py-2 border-b text-gray-800"
+            >
+              {{ fila[col] }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <!-- Lista de Médicos -->
 <div class="container mx-auto px-4 py-8" *ngIf="medicos.length > 0">
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">

@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { CitaService } from '../services/cita.service';
 import { CitaModalComponent } from '../modals/cita-modal.component';
 import { MedicoService, Medico } from '../services/medico.service';
@@ -9,13 +10,19 @@ import { MedicoService, Medico } from '../services/medico.service';
 @Component({
   selector: 'app-medicos',
   standalone: true,
-  imports: [CommonModule, CitaModalComponent],
+  imports: [CommonModule, FormsModule, CitaModalComponent],
   templateUrl: "medicos.component.html"
 })
 export class MedicosComponent implements OnInit {
   especialidadId: string = '';
   medicos: Medico[] = [];
   currentUrl: string = '';
+
+  // Búsqueda vulnerable a SQL Injection
+  busqueda: string = '';
+  resultadosBusqueda: any[] = [];
+  buscando: boolean = false;
+  errorBusqueda: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -51,6 +58,37 @@ export class MedicosComponent implements OnInit {
         });
       console.log('Médicos cargados desde backend:', this.medicos);
     });
+  }
+
+  // VULNERABILIDAD SQL INJECTION: envía el texto tal cual al endpoint vulnerable
+  buscar() {
+    if (!this.busqueda.trim()) {
+      return;
+    }
+    this.buscando = true;
+    this.errorBusqueda = '';
+    this.resultadosBusqueda = [];
+
+    this.medicoService.buscarInseguro(this.busqueda).subscribe({
+      next: (res: any[]) => {
+        this.resultadosBusqueda = res || [];
+        this.buscando = false;
+      },
+      error: (err) => {
+        console.error('Error en búsqueda', err);
+        this.errorBusqueda =
+          'Error al ejecutar la búsqueda (HTTP ' +
+          (err?.status ?? '?') +
+          '). Revisa la sintaxis de tu consulta.';
+        this.buscando = false;
+      }
+    });
+  }
+
+  getColumnas(): string[] {
+    return this.resultadosBusqueda.length > 0
+      ? Object.keys(this.resultadosBusqueda[0])
+      : [];
   }
 
   // En medicos.component.ts - modifica el método agendarCita

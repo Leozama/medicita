@@ -44,7 +44,7 @@ public class MedicoController {
     @GetMapping("/buscar")
     public List<java.util.Map<String, Object>> buscarInseguro(@RequestParam("esp") String esp) {
         // Consulta SQL nativa concatenada directamente (Vulnerable a SQLi)
-        String sql = "SELECT * FROM medicos WHERE especialidad = '" + esp + "'";
+        String sql = "SELECT * FROM medico WHERE especialidad = '" + esp + "'";
         return jdbcTemplate.queryForList(sql);
     }
 

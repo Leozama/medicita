@@ -34,6 +34,11 @@ export class MedicoService {
     return this.http.get<Medico[]>(this.baseUrl);
   }
 
+  // VULNERABILIDAD SQL INJECTION: llama al endpoint de búsqueda vulnerable del backend
+  buscarInseguro(esp: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/buscar?esp=${encodeURIComponent(esp)}`);
+  }
+
   /**
    * Elimina un médico por id en el backend.
    * Devuelve Observable<boolean> indicando éxito (true) o fracaso (false).
