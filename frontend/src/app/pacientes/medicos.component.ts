@@ -42,7 +42,7 @@ export class MedicosComponent implements OnInit {
       this.medicos = list
         .map((m: any) => ({
           ...m,
-          nombre: m.nombre || (m.firstName ? m.firstName + (m.secondName ? ' ' + m.secondName : '') : (m.nombre || ''))
+          nombre: m.nombre || m.firstName || ''
         }))
         .filter((m: Medico) => {
           const specFromBackend = (m.especialidad || '').toString();
