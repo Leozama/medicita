@@ -90,11 +90,13 @@ public class MedicoServiceImplementation implements MedicoService {
     }
 
     private MedicoResponseDTO convertirAResponseDTO(Medico medico) {
+        // XSS: No concatenar espacio extra para que el payload HTML/Script quede limpio en el campo firstName
+        String nombreCompleto = medico.getFirstName() != null ? medico.getFirstName() : "";
         return new MedicoResponseDTO(
                 medico.getId(),
                 medico.getFirstName(),
                 medico.getSecondName(),
-                medico.getFirstName() + " " + medico.getSecondName(),
+                nombreCompleto,
                 medico.getEspecialidad(),
                 medico.getHorario(),
                 medico.getCostoConsulta());
